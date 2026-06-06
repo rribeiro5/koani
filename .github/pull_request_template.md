@@ -1,27 +1,27 @@
-## Summary
+### Summary
 
 <!--What does this PR change?-->
 
 ---
 
-## Motivation
+### Motivation
 
 <!--Why is this needed?-->
 
 ---
 
-## Changes
+### Changes
 
 - …
 
 ---
 
-## Testing
+### Testing
 
 <!--How did you test it?-->
 
 ---
 
-## Notes
+### Notes
 
 <!--Anything important for reviewers to know?-->
