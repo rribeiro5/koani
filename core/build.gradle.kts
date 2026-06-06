@@ -8,6 +8,17 @@ plugins {
     alias(libs.plugins.detekt)
 }
 
+detekt {
+    toolVersion = libs.versions.detekt.get()
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    baseline = file("$rootDir/config/detekt/detekt-baseline.xml")
+    source.setFrom(files("src"))
+}
+
+dependencies {
+    detektPlugins(libs.detekt.formatting)
+}
+
 kotlin {
     android {
         namespace = "io.github.rribeiro5.koani.core"
