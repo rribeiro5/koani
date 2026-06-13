@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -20,6 +21,8 @@ dependencies {
 }
 
 kotlin {
+    explicitApi = ExplicitApiMode.Strict
+
     android {
         namespace = "io.github.rribeiro5.koani.core"
         compileSdk = 36

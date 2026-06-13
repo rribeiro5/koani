@@ -7,7 +7,7 @@ package io.github.rribeiro5.koani
  * @return A list of Fibonacci numbers.
  * @throws IllegalArgumentException if count is less than zero.
  */
-fun getFibonacciNumbers(count: Int): List<Int> {
+public fun getFibonacciNumbers(count: Int): List<Int> {
     require(count >= 0)
     val result = mutableListOf<Int>()
 
