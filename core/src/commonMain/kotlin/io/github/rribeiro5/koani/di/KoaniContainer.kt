@@ -1,6 +1,7 @@
 package io.github.rribeiro5.koani.di
 
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.Json
 internal class KoaniContainer(
     clientId: String,
     timeoutMillis: Long? = null,
+    engine: HttpClientEngine = getEngine(),
 ) {
 
     companion object {
@@ -18,7 +20,7 @@ internal class KoaniContainer(
         private const val CLIENT_ID_HEADER = "X-MAL-CLIENT-ID"
     }
 
-    private val httpClient: HttpClient = HttpClient {
+    private val httpClient: HttpClient = HttpClient(engine) {
         expectSuccess = true
         defaultRequest {
             url(BASE_URL)
