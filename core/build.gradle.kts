@@ -70,6 +70,10 @@ kotlin {
             implementation(libs.ktor.client.js)
         }
 
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
+        }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
