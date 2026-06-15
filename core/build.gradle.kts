@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kover)
 }
 
 detekt {
