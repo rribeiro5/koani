@@ -9,6 +9,7 @@ kotlinx-datetime = "0.8.0"
 ktor = "3.5.0"
 detekt = "2.0.0-alpha.3"
 kover = "0.9.8"
+kermit = "2.1.0"
 
 [libraries]
 
@@ -29,6 +30,7 @@ ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-curl = { module = "io.ktor:ktor-client-curl", version.ref = "ktor" }
 ktor-client-winhttp = { module = "io.ktor:ktor-client-winhttp", version.ref = "ktor" }
 detekt-formatting = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 
