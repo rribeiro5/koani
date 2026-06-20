@@ -1,5 +1,6 @@
 package io.github.rribeiro5.koani.di
 
+import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.loggerConfigInit
@@ -19,10 +20,11 @@ import io.ktor.client.plugins.logging.LogLevel as KtorLogLevel
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 internal class KoaniContainer(
-    clientId: String,
+    val clientId: String,
     timeoutMillis: Long? = null,
     logLevel: LogLevel = LogLevel.NONE,
     engine: HttpClientEngine = getEngine(),
+    logWriter: LogWriter = platformLogWriter(),
 ) {
 
     companion object {
@@ -34,7 +36,7 @@ internal class KoaniContainer(
 
     val logger = Logger(
         config = loggerConfigInit(
-            platformLogWriter(),
+            logWriter,
             minSeverity = when (logLevel) {
                 LogLevel.VERBOSE -> Severity.Verbose
                 LogLevel.DEBUG -> Severity.Debug

@@ -5,12 +5,15 @@ import io.github.rribeiro5.koani.di.KoaniContainer
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
     init {
+        require(container.clientId.isNotBlank()) {
+            "Client ID cannot be empty".also { container.logger.e(it) }
+        }
         container.logger.d { "KoaniClient successfully initialized" }
     }
 
-    public class Builder(private val clientId: String) {
-        private var timeoutMillis: Long? = null
-        private var logLevel: LogLevel = LogLevel.NONE
+    public class Builder(internal val clientId: String) {
+        internal var timeoutMillis: Long? = null
+        internal var logLevel: LogLevel = LogLevel.NONE
 
         public fun timeoutMillis(timeoutMillis: Long): Builder = apply {
             this.timeoutMillis = timeoutMillis
