@@ -4,6 +4,10 @@ import io.github.rribeiro5.koani.di.KoaniContainer
 
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
+    init {
+        container.logger.d { "KoaniClient successfully initialized" }
+    }
+
     public class Builder(private val clientId: String) {
         private var timeoutMillis: Long? = null
         private var logLevel: LogLevel = LogLevel.NONE
@@ -22,6 +26,17 @@ public class KoaniClient internal constructor(private val container: KoaniContai
                 timeoutMillis = timeoutMillis,
                 logLevel = logLevel,
             )
+
+            container.logger.d { "Initializing KoaniClient" }
+            container.logger.v {
+                val sanitizedClientId = if (clientId.length > 4) {
+                    clientId.take(4) + "*".repeat(clientId.length - 4)
+                } else {
+                    "*".repeat(clientId.length)
+                }
+                "Initializing KoaniClient (clientId=$sanitizedClientId, timeoutMillis=$timeoutMillis, logLevel=$logLevel)"
+            }
+
             return KoaniClient(container)
         }
     }
