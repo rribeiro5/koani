@@ -2,6 +2,7 @@ package io.github.rribeiro5.koani
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 class KoaniClientBuilderTest {
@@ -47,5 +48,16 @@ class KoaniClientBuilderTest {
         val client = subject.build()
 
         assertNotNull(client)
+    }
+
+    @Test
+    fun `build should throw exception when clientId is blank`() {
+        val subject = createSubject(clientId = "")
+
+        val exception = assertFailsWith<IllegalArgumentException> {
+            subject.build()
+        }
+
+        assertEquals("Client ID cannot be empty", exception.message)
     }
 }

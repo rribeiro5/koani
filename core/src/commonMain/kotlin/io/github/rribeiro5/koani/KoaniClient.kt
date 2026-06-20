@@ -5,6 +5,9 @@ import io.github.rribeiro5.koani.di.KoaniContainer
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
     init {
+        require(container.clientId.isNotBlank()) {
+            "Client ID cannot be empty".also { container.logger.e(it) }
+        }
         container.logger.d { "KoaniClient successfully initialized" }
     }
 
