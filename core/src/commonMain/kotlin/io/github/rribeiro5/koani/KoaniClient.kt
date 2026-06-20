@@ -8,9 +8,9 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         container.logger.d { "KoaniClient successfully initialized" }
     }
 
-    public class Builder(private val clientId: String) {
-        private var timeoutMillis: Long? = null
-        private var logLevel: LogLevel = LogLevel.NONE
+    public class Builder(internal val clientId: String) {
+        internal var timeoutMillis: Long? = null
+        internal var logLevel: LogLevel = LogLevel.NONE
 
         public fun timeoutMillis(timeoutMillis: Long): Builder = apply {
             this.timeoutMillis = timeoutMillis
