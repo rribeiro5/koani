@@ -1,8 +1,11 @@
 package io.github.rribeiro5.koani
 
+import io.github.rribeiro5.koani.auth.MemoryTokenManager
+import io.github.rribeiro5.koani.auth.TokenManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 
 class KoaniClientBuilderTest {
@@ -19,6 +22,7 @@ class KoaniClientBuilderTest {
         assertEquals(clientId, subject.clientId)
         assertEquals(null, subject.timeoutMillis)
         assertEquals(LogLevel.NONE, subject.logLevel)
+        assertIs<MemoryTokenManager>(subject.tokenManager)
     }
 
     @Test
@@ -39,6 +43,21 @@ class KoaniClientBuilderTest {
         subject.logLevel(logLevel)
 
         assertEquals(logLevel, subject.logLevel)
+    }
+
+    @Test
+    fun `tokenManager should update builder property`() {
+        val subject = createSubject()
+        val customManager = object : TokenManager {
+            override fun accessToken(): String? = null
+            override fun refreshToken(): String? = null
+            override fun storeTokens(accessToken: String, refreshToken: String?) {}
+            override fun clearTokens() {}
+        }
+
+        subject.tokenManager(customManager)
+
+        assertEquals(customManager, subject.tokenManager)
     }
 
     @Test
