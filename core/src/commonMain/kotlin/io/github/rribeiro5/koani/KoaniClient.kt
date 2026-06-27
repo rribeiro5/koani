@@ -1,5 +1,7 @@
 package io.github.rribeiro5.koani
 
+import io.github.rribeiro5.koani.auth.MemoryTokenManager
+import io.github.rribeiro5.koani.auth.TokenManager
 import io.github.rribeiro5.koani.di.KoaniContainer
 
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
@@ -14,6 +16,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
     public class Builder(internal val clientId: String) {
         internal var timeoutMillis: Long? = null
         internal var logLevel: LogLevel = LogLevel.NONE
+        internal var tokenManager: TokenManager = MemoryTokenManager()
 
         public fun timeoutMillis(timeoutMillis: Long): Builder = apply {
             this.timeoutMillis = timeoutMillis
@@ -23,9 +26,14 @@ public class KoaniClient internal constructor(private val container: KoaniContai
             this.logLevel = logLevel
         }
 
+        public fun tokenManager(tokenManager: TokenManager): Builder = apply {
+            this.tokenManager = tokenManager
+        }
+
         public fun build(): KoaniClient {
             val container = KoaniContainer(
                 clientId = clientId,
+                tokenManager = tokenManager,
                 timeoutMillis = timeoutMillis,
                 logLevel = logLevel,
             )
