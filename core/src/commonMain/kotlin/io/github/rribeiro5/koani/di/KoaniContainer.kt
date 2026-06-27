@@ -6,6 +6,7 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.loggerConfigInit
 import co.touchlab.kermit.platformLogWriter
 import io.github.rribeiro5.koani.LogLevel
+import io.github.rribeiro5.koani.auth.TokenManager
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -21,6 +22,7 @@ import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 internal class KoaniContainer(
     val clientId: String,
+    val tokenManager: TokenManager? = null,
     timeoutMillis: Long? = null,
     logLevel: LogLevel = LogLevel.NONE,
     engine: HttpClientEngine = getEngine(),
