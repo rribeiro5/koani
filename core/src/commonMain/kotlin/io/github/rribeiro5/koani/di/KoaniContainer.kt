@@ -58,6 +58,9 @@ internal class KoaniContainer(
         defaultRequest {
             url(BASE_URL)
             header(CLIENT_ID_HEADER, clientId)
+            tokenManager.accessToken()?.let { token ->
+                header(HttpHeaders.Authorization, "Bearer $token")
+            }
         }
         install(ContentNegotiation) {
             json(
@@ -79,7 +82,9 @@ internal class KoaniContainer(
                     }
                 }
                 level = KtorLogLevel.ALL
-                sanitizeHeader { header -> header == HttpHeaders.Authorization }
+                sanitizeHeader { header -> 
+                    header == HttpHeaders.Authorization || header == CLIENT_ID_HEADER 
+                }
             }
         }
     }
