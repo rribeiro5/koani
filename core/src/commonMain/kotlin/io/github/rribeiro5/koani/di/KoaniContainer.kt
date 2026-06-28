@@ -10,6 +10,7 @@ import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.TokenManager
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -17,6 +18,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
+import io.github.rribeiro5.koani.error.handleRequestException
 import kotlinx.serialization.json.Json
 import io.ktor.client.plugins.logging.LogLevel as KtorLogLevel
 import io.ktor.client.plugins.logging.Logger as KtorLogger
@@ -69,6 +71,11 @@ internal class KoaniContainer(
                     prettyPrint = true
                 }
             )
+        }
+        HttpResponseValidator {
+            handleResponseException { cause ->
+                handleRequestException(cause)
+            }
         }
         install(HttpTimeout) {
             requestTimeoutMillis = timeoutMillis
