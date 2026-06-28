@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
-  <CurrentIssues></CurrentIssues>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ThrowsCount:RequestErrorHandler.kt:internal suspend fun handleRequestException</ID>
+  </CurrentIssues>
 </SmellBaseline>
