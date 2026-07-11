@@ -10,20 +10,10 @@ import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.TokenManager
 import io.github.rribeiro5.koani.auth.service.AuthService
 import io.github.rribeiro5.koani.auth.service.KtorAuthService
+import io.github.rribeiro5.koani.http.buildHttpClient
+import io.github.rribeiro5.koani.http.getEngine
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.plugins.HttpResponseValidator
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.header
-import io.ktor.http.HttpHeaders
-import io.ktor.serialization.kotlinx.json.json
-import io.github.rribeiro5.koani.error.handleRequestException
-import kotlinx.serialization.json.Json
-import io.ktor.client.plugins.logging.LogLevel as KtorLogLevel
-import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 internal class KoaniContainer(
     val clientId: String,
@@ -37,9 +27,6 @@ internal class KoaniContainer(
 
     companion object {
         private const val LOGGER_TAG = "KoaniClient"
-
-        private const val BASE_URL = "https://api.myanimelist.net/"
-        private const val CLIENT_ID_HEADER = "X-MAL-CLIENT-ID"
     }
 
     val logger = Logger(
@@ -58,46 +45,14 @@ internal class KoaniContainer(
         tag = LOGGER_TAG
     )
 
-    private val httpClient: HttpClient = HttpClient(engine) {
-        expectSuccess = true
-        defaultRequest {
-            url(BASE_URL)
-            header(CLIENT_ID_HEADER, clientId)
-            tokenManager.accessToken()?.let { token ->
-                header(HttpHeaders.Authorization, "Bearer $token")
-            }
-        }
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                }
-            )
-        }
-        HttpResponseValidator {
-            handleResponseException { cause ->
-                handleRequestException(cause)
-            }
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = timeoutMillis
-        }
-
-        if (logLevel != LogLevel.NONE) {
-            install(Logging) {
-                logger = object : KtorLogger {
-                    override fun log(message: String) {
-                        this@KoaniContainer.logger.v { message }
-                    }
-                }
-                level = KtorLogLevel.ALL
-                sanitizeHeader { header -> 
-                    header == HttpHeaders.Authorization || header == CLIENT_ID_HEADER 
-                }
-            }
-        }
-    }
+    private val httpClient: HttpClient = buildHttpClient(
+        engine = engine,
+        clientId = clientId,
+        tokenManager = tokenManager,
+        logger = logger,
+        timeoutMillis = timeoutMillis,
+        logLevel = logLevel,
+    )
 
     val authService: AuthService = KtorAuthService(httpClient)
 }
