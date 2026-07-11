@@ -20,9 +20,20 @@ class KoaniClientBuilderTest {
         val subject = createSubject(clientId)
 
         assertEquals(clientId, subject.clientId)
+        assertEquals(null, subject.clientSecret)
         assertEquals(null, subject.timeoutMillis)
         assertEquals(LogLevel.NONE, subject.logLevel)
         assertIs<MemoryTokenManager>(subject.tokenManager)
+    }
+
+    @Test
+    fun `clientSecret should update builder property`() {
+        val subject = createSubject()
+        val clientSecret = "test-secret"
+
+        subject.clientSecret(clientSecret)
+
+        assertEquals(clientSecret, subject.clientSecret)
     }
 
     @Test
@@ -63,7 +74,7 @@ class KoaniClientBuilderTest {
     @Test
     fun `build should create KoaniClient`() {
         val subject = createSubject()
-        
+
         val client = subject.build()
 
         assertNotNull(client)
