@@ -4,7 +4,6 @@ import io.github.rribeiro5.koani.auth.dto.TokenResponses
 import io.github.rribeiro5.koani.di.KtorRequestMock
 import io.github.rribeiro5.koani.http.fakeHttpClient
 import io.ktor.client.engine.mock.respond
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
@@ -24,7 +23,7 @@ class KtorAuthServiceTest {
             respond(
                 content = TokenResponses.SUCCESS,
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
 
@@ -45,7 +44,7 @@ class KtorAuthServiceTest {
             respond(
                 content = TokenResponses.SUCCESS,
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
 
