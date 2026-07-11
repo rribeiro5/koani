@@ -1,5 +1,6 @@
 package io.github.rribeiro5.koani.error
 
+import io.github.rribeiro5.koani.error.dto.ErrorResponse
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
@@ -19,18 +20,18 @@ internal suspend fun handleRequestException(cause: Throwable) {
     val response = cause.response
     val statusCode = response.status.value
 
-    val errorDto = response.safeErrorBody()
+    val errorResponse = response.safeErrorBody()
 
     when (statusCode) {
         in REDIRECT_MIN..REDIRECT_MAX -> throw RedirectResponseException(statusCode)
-        BAD_REQUEST -> throw BadRequestException(errorDto?.error, errorDto?.message)
-        UNAUTHORIZED -> throw UnauthorizedException(errorDto?.error, errorDto?.message)
-        FORBIDDEN -> throw ForbiddenException(errorDto?.error, errorDto?.message)
-        NOT_FOUND -> throw NotFoundException(errorDto?.error, errorDto?.message)
+        BAD_REQUEST -> throw BadRequestException(errorResponse?.error, errorResponse?.message)
+        UNAUTHORIZED -> throw UnauthorizedException(errorResponse?.error, errorResponse?.message)
+        FORBIDDEN -> throw ForbiddenException(errorResponse?.error, errorResponse?.message)
+        NOT_FOUND -> throw NotFoundException(errorResponse?.error, errorResponse?.message)
         in SERVER_ERROR_MIN..SERVER_ERROR_MAX -> throw ServerResponseException(statusCode)
         else -> throw cause
     }
 }
 
-private suspend fun HttpResponse.safeErrorBody(): ErrorDto? = 
-    runCatching { body<ErrorDto>() }.getOrNull()
+private suspend fun HttpResponse.safeErrorBody(): ErrorResponse? = 
+    runCatching { body<ErrorResponse>() }.getOrNull()
