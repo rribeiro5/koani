@@ -10,6 +10,7 @@ import io.github.rribeiro5.koani.di.fakeContainer
 import io.github.rribeiro5.koani.di.fakeLogWriter
 import io.github.rribeiro5.koani.error.BadRequestException
 import io.github.rribeiro5.koani.error.UnauthorizedException
+import io.github.rribeiro5.koani.error.dto.ErrorResponses
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -87,7 +88,7 @@ class KoaniClientTest {
         val container = fakeContainer(
             requestHandler = {
                 respond(
-                    content = TokenResponses.ERROR,
+                    content = ErrorResponses.INVALID_GRANT,
                     status = HttpStatusCode.BadRequest,
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
@@ -140,7 +141,7 @@ class KoaniClientTest {
             tokenManager = tokenManager,
             requestHandler = {
                 respond(
-                    content = TokenResponses.ERROR,
+                    content = ErrorResponses.INVALID_GRANT,
                     status = HttpStatusCode.Unauthorized,
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )

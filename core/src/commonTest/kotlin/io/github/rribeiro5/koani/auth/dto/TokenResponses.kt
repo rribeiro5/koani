@@ -9,11 +9,4 @@ internal object TokenResponses {
             "refresh_token": "refresh-token-456"
         }
     """
-
-    const val ERROR = """
-        {
-            "error": "invalid_grant",
-            "message": "The provided authorization grant is invalid."
-        }
-    """
 }
