@@ -8,6 +8,8 @@ import co.touchlab.kermit.platformLogWriter
 import io.github.rribeiro5.koani.LogLevel
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.TokenManager
+import io.github.rribeiro5.koani.auth.service.AuthService
+import io.github.rribeiro5.koani.auth.service.KtorAuthService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpResponseValidator
@@ -25,6 +27,7 @@ import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 internal class KoaniContainer(
     val clientId: String,
+    val clientSecret: String? = null,
     val tokenManager: TokenManager = MemoryTokenManager(),
     timeoutMillis: Long? = null,
     logLevel: LogLevel = LogLevel.NONE,
@@ -95,4 +98,6 @@ internal class KoaniContainer(
             }
         }
     }
+
+    val authService: AuthService = KtorAuthService(httpClient)
 }

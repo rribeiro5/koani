@@ -3,6 +3,7 @@ package io.github.rribeiro5.koani
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.TokenManager
 import io.github.rribeiro5.koani.di.KoaniContainer
+import io.github.rribeiro5.koani.util.sanitize
 
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
@@ -14,9 +15,14 @@ public class KoaniClient internal constructor(private val container: KoaniContai
     }
 
     public class Builder(internal val clientId: String) {
+        internal var clientSecret: String? = null
         internal var timeoutMillis: Long? = null
         internal var logLevel: LogLevel = LogLevel.NONE
         internal var tokenManager: TokenManager = MemoryTokenManager()
+
+        public fun clientSecret(clientSecret: String?): Builder = apply {
+            this.clientSecret = clientSecret
+        }
 
         public fun timeoutMillis(timeoutMillis: Long): Builder = apply {
             this.timeoutMillis = timeoutMillis
@@ -33,6 +39,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         public fun build(): KoaniClient {
             val container = KoaniContainer(
                 clientId = clientId,
+                clientSecret = clientSecret,
                 tokenManager = tokenManager,
                 timeoutMillis = timeoutMillis,
                 logLevel = logLevel,
@@ -40,12 +47,9 @@ public class KoaniClient internal constructor(private val container: KoaniContai
 
             container.logger.d { "Initializing KoaniClient" }
             container.logger.v {
-                val sanitizedClientId = if (clientId.length > 4) {
-                    clientId.take(4) + "*".repeat(clientId.length - 4)
-                } else {
-                    "*".repeat(clientId.length)
-                }
-                "Initializing KoaniClient (clientId=$sanitizedClientId, timeoutMillis=$timeoutMillis, logLevel=$logLevel)"
+                val sanitizedClientId = clientId.sanitize()
+                val sanitizedClientSecret = clientSecret?.sanitize()
+                "Initializing KoaniClient (clientId=$sanitizedClientId, clientSecret=$sanitizedClientSecret, timeoutMillis=$timeoutMillis, logLevel=$logLevel)"
             }
 
             return KoaniClient(container)
