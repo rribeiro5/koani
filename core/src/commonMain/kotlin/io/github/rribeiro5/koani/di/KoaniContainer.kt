@@ -45,14 +45,27 @@ internal class KoaniContainer(
         tag = LOGGER_TAG
     )
 
-    private val httpClient: HttpClient = buildHttpClient(
+    private val authHttpClient: HttpClient = buildHttpClient(
         engine = engine,
         clientId = clientId,
+        clientSecret = clientSecret,
         tokenManager = tokenManager,
+        authService = null,
         logger = logger,
         timeoutMillis = timeoutMillis,
         logLevel = logLevel,
     )
 
-    val authService: AuthService = KtorAuthService(httpClient)
+    val authService: AuthService = KtorAuthService(authHttpClient)
+
+    private val httpClient: HttpClient = buildHttpClient(
+        engine = engine,
+        clientId = clientId,
+        clientSecret = clientSecret,
+        tokenManager = tokenManager,
+        authService = authService,
+        logger = logger,
+        timeoutMillis = timeoutMillis,
+        logLevel = logLevel,
+    )
 }
