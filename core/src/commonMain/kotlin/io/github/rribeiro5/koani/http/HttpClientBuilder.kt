@@ -50,7 +50,7 @@ internal fun buildHttpClient(
                     BearerTokens(accessToken, tokenManager.refreshToken())
                 }
                 refreshTokens {
-                    val refreshToken = oldTokens?.refreshToken ?: tokenManager.refreshToken() ?: return@refreshTokens null
+                    val refreshToken = oldTokens?.refreshToken ?: return@refreshTokens null
                     try {
                         val response = authService.refreshTokens(
                             clientId = clientId,
