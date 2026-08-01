@@ -13,6 +13,13 @@ internal fun <T, R> PaginatedListResponse<T>.toPaginatedList(
     paging = paging.toPagingData()
 )
 
+internal fun <T, R> PaginatedListResponse<T>.flatMap(
+    mapItem: (T) -> R
+): PaginatedListResponse<R> = PaginatedListResponse(
+    data = data.map(mapItem),
+    paging = paging
+)
+
 internal fun PagingDataResponse?.toPagingData(): PagingData {
     val nextParsedUrl = this?.next?.let { Url(it) }
     val previousParsedUrl = this?.previous?.let { Url(it) }

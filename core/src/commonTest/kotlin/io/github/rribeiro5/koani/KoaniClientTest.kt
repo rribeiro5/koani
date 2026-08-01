@@ -2,6 +2,7 @@ package io.github.rribeiro5.koani
 
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Severity
+import io.github.rribeiro5.koani.anime.dto.AnimeResponses
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.dto.TokenResponses
 import io.github.rribeiro5.koani.di.KoaniContainer
@@ -180,6 +181,46 @@ class KoaniClientTest {
 
         assertEquals(null, subject.auth.tokenManager.accessToken())
         assertEquals(null, subject.auth.tokenManager.refreshToken())
+    }
+    // endregion
+
+    // region Anime tests
+    @Test
+    fun `getAnimeList should return mapped anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.ANIME_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getAnimeList("cowboy")
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+
+    @Test
+    fun `getAnimeDetails should return mapped anime details`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.ANIME_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getAnimeDetails(1)
+
+        assertEquals(1, result.id)
+        assertEquals("Cowboy Bebop", result.title)
     }
     // endregion
 }

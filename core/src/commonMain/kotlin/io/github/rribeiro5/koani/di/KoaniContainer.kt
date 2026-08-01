@@ -6,6 +6,8 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.loggerConfigInit
 import co.touchlab.kermit.platformLogWriter
 import io.github.rribeiro5.koani.LogLevel
+import io.github.rribeiro5.koani.anime.service.AnimeService
+import io.github.rribeiro5.koani.anime.service.KtorAnimeService
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.TokenManager
 import io.github.rribeiro5.koani.auth.service.AuthService
@@ -68,4 +70,6 @@ internal class KoaniContainer(
         timeoutMillis = timeoutMillis,
         logLevel = logLevel,
     )
+
+    val animeService: AnimeService = KtorAnimeService(httpClient)
 }
