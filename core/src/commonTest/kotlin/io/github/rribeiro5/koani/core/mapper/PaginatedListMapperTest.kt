@@ -86,4 +86,21 @@ class PaginatedListMapperTest {
         assertNull(result.previousOffset)
         assertNull(result.limit)
     }
+
+    @Test
+    fun `flatMap should map items while preserving paging`() {
+        val paging = PagingDataResponse(
+            next = "next-url",
+            previous = "prev-url"
+        )
+        val response = PaginatedListResponse(
+            data = listOf("a", "b"),
+            paging = paging
+        )
+
+        val result = response.flatMap { it.uppercase() }
+
+        assertEquals(listOf("A", "B"), result.data)
+        assertEquals(paging, result.paging)
+    }
 }

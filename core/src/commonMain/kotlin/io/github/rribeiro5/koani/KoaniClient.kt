@@ -1,15 +1,25 @@
 package io.github.rribeiro5.koani
 
+import io.github.rribeiro5.koani.anime.AnimeField
+import io.github.rribeiro5.koani.anime.RankingType
+import io.github.rribeiro5.koani.anime.Season
+import io.github.rribeiro5.koani.anime.SeasonalAnimeSort
+import io.github.rribeiro5.koani.anime.mapper.toDomain
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.Session
 import io.github.rribeiro5.koani.auth.TokenManager
 import io.github.rribeiro5.koani.auth.mapper.toSession
+import io.github.rribeiro5.koani.core.PaginatedList
+import io.github.rribeiro5.koani.core.mapper.toPaginatedList
 import io.github.rribeiro5.koani.di.KoaniContainer
 import io.github.rribeiro5.koani.util.sanitize
+import io.github.rribeiro5.koani.anime.Anime as AnimeModel
+import io.github.rribeiro5.koani.anime.RankedAnime as RankedAnimeModel
 
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
     public val auth: Auth by lazy { Auth(container) }
+    public val anime: Anime by lazy { Anime(container) }
 
     init {
         require(container.clientId.isNotBlank()) {
@@ -66,6 +76,81 @@ public class KoaniClient internal constructor(private val container: KoaniContai
             container.logger.d { "Logging out user..." }
             tokenManager.clearTokens()
             container.logger.i { "User logged out successfully" }
+        }
+    }
+
+    public class Anime internal constructor(private val container: KoaniContainer) {
+        public suspend fun getAnimeList(
+            query: String? = null,
+            limit: Int? = null,
+            offset: Int? = null,
+            fields: List<AnimeField>? = null,
+        ): PaginatedList<AnimeModel> {
+            container.logger.d { "Getting anime list${query?.let { " for query: $it" } ?: ""}" }
+            return container.animeService.getAnimeList(
+                query = query,
+                limit = limit,
+                offset = offset,
+                fields = fields?.map { it.fieldName },
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getAnimeDetails(
+            animeId: Int,
+            fields: List<AnimeField>? = null,
+        ): AnimeModel {
+            container.logger.d { "Getting anime details for id: $animeId" }
+            return container.animeService.getAnimeDetails(
+                animeId = animeId,
+                fields = fields?.map { it.fieldName },
+            ).toDomain()
+        }
+
+        public suspend fun getAnimeRanking(
+            rankingType: RankingType,
+            limit: Int? = null,
+            offset: Int? = null,
+            fields: List<AnimeField>? = null,
+        ): PaginatedList<RankedAnimeModel> {
+            container.logger.d { "Getting anime ranking for type: ${rankingType.value}" }
+            return container.animeService.getAnimeRanking(
+                rankingType = rankingType.value,
+                limit = limit,
+                offset = offset,
+                fields = fields?.map { it.fieldName },
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getSeasonalAnimes(
+            year: Int,
+            season: Season,
+            sort: SeasonalAnimeSort? = null,
+            limit: Int? = null,
+            offset: Int? = null,
+            fields: List<AnimeField>? = null,
+        ): PaginatedList<AnimeModel> {
+            container.logger.d { "Getting seasonal anime for $year ${season.value}" }
+            return container.animeService.getSeasonalAnimes(
+                year = year,
+                season = season.value,
+                sort = sort?.value,
+                limit = limit,
+                offset = offset,
+                fields = fields?.map { it.fieldName },
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getSuggestedAnimes(
+            limit: Int? = null,
+            offset: Int? = null,
+            fields: List<AnimeField>? = null,
+        ): PaginatedList<AnimeModel> {
+            container.logger.d { "Getting suggested anime" }
+            return container.animeService.getSuggestedAnimes(
+                limit = limit,
+                offset = offset,
+                fields = fields?.map { it.fieldName },
+            ).toPaginatedList { it.toDomain() }
         }
     }
 

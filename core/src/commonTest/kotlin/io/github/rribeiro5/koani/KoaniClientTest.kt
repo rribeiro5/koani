@@ -2,6 +2,10 @@ package io.github.rribeiro5.koani
 
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Severity
+import io.github.rribeiro5.koani.anime.AnimeField
+import io.github.rribeiro5.koani.anime.RankingType
+import io.github.rribeiro5.koani.anime.Season
+import io.github.rribeiro5.koani.anime.dto.AnimeResponses
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.dto.TokenResponses
 import io.github.rribeiro5.koani.di.KoaniContainer
@@ -180,6 +184,150 @@ class KoaniClientTest {
 
         assertEquals(null, subject.auth.tokenManager.accessToken())
         assertEquals(null, subject.auth.tokenManager.refreshToken())
+    }
+    // endregion
+
+    // region Anime tests
+    @Test
+    fun `getAnimeList should return mapped anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.ANIME_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getAnimeList("cowboy")
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+
+    @Test
+    fun `getAnimeList should pass fields to service`() = runTest {
+        var capturedFields: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedFields = it.url.parameters["fields"]
+                respond(
+                    content = AnimeResponses.ANIME_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.anime.getAnimeList(
+            query = "cowboy",
+            fields = listOf(AnimeField.ID, AnimeField.TITLE, AnimeField.SYNOPSIS)
+        )
+
+        assertEquals("id,title,synopsis", capturedFields)
+    }
+
+    @Test
+    fun `getAnimeDetails should return mapped anime details`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.ANIME_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getAnimeDetails(1)
+
+        assertEquals(1, result.id)
+        assertEquals("Cowboy Bebop", result.title)
+    }
+
+    @Test
+    fun `getAnimeDetails should pass fields to service`() = runTest {
+        var capturedFields: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedFields = it.url.parameters["fields"]
+                respond(
+                    content = AnimeResponses.ANIME_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.anime.getAnimeDetails(
+            animeId = 1,
+            fields = listOf(AnimeField.ID, AnimeField.MEAN, AnimeField.RANK)
+        )
+
+        assertEquals("id,mean,rank", capturedFields)
+    }
+
+    @Test
+    fun `getAnimeRanking should return ranked anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.ANIME_RANKING,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getAnimeRanking(RankingType.All)
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].anime.title)
+        assertEquals(1, result.data[0].rank)
+    }
+
+    @Test
+    fun `getSeasonalAnimes should return seasonal anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.SEASONAL_ANIME,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getSeasonalAnimes(2024, Season.Spring)
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+
+    @Test
+    fun `getSuggestedAnimes should return suggested anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.SUGGESTED_ANIME,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getSuggestedAnimes()
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].title)
     }
     // endregion
 }
