@@ -1,5 +1,6 @@
 package io.github.rribeiro5.koani
 
+import io.github.rribeiro5.koani.anime.AnimeField
 import io.github.rribeiro5.koani.anime.mapper.toDomain
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.Session
@@ -79,25 +80,25 @@ public class KoaniClient internal constructor(private val container: KoaniContai
             query: String? = null,
             limit: Int? = null,
             offset: Int? = null,
-            fields: List<String>? = null,
+            fields: List<AnimeField>? = null,
         ): PaginatedList<AnimeModel> {
             container.logger.d { "Getting anime list${query?.let { " for query: $it" } ?: ""}" }
             return container.animeService.getAnimeList(
                 query = query,
                 limit = limit,
                 offset = offset,
-                fields = fields,
+                fields = fields?.map { it.fieldName },
             ).toPaginatedList { it.toDomain() }
         }
 
         public suspend fun getAnimeDetails(
             animeId: Int,
-            fields: List<String>? = null,
+            fields: List<AnimeField>? = null,
         ): AnimeModel {
             container.logger.d { "Getting anime details for id: $animeId" }
             return container.animeService.getAnimeDetails(
                 animeId = animeId,
-                fields = fields,
+                fields = fields?.map { it.fieldName },
             ).toDomain()
         }
     }
