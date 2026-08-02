@@ -2,6 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>CyclomaticComplexMethod:AnimeMapper.kt:private fun String.toSource: Source?</ID>
     <ID>ThrowsCount:RequestErrorHandler.kt:internal suspend fun handleRequestException</ID>
+    <ID>TooManyFunctions:AnimeMapper.kt:io.github.rribeiro5.koani.anime.mapper.AnimeMapper.kt</ID>
   </CurrentIssues>
 </SmellBaseline>

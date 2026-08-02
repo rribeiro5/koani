@@ -170,7 +170,15 @@ class AnimeMapperTest {
 
     @Test
     fun `Enums should map to null or Unknown when value is invalid`() {
-        val animeResponse = AnimeResponse(id = 1, title = "", nsfw = "invalid", mediaType = "invalid", status = "invalid", rating = "invalid", source = "invalid")
+        val animeResponse = AnimeResponse(
+            id = 1,
+            title = "",
+            nsfw = "invalid",
+            mediaType = "invalid",
+            status = "invalid",
+            rating = "invalid",
+            source = "invalid"
+        )
         val domain = animeResponse.toDomain()
         assertNull(domain.nsfw)
         assertNull(domain.mediaType)
@@ -181,7 +189,13 @@ class AnimeMapperTest {
         val startSeasonResponse = StartSeasonResponse(2020, "invalid")
         assertEquals(Season.Unknown, startSeasonResponse.toDomain().season)
 
-        val myListStatusResponse = MyListStatusResponse(status = "invalid", score = 0, numEpisodesWatched = 0, isRewatching = false, updatedAt = "2023-01-01T00:00:00Z")
+        val myListStatusResponse = MyListStatusResponse(
+            status = "invalid",
+            score = 0,
+            numEpisodesWatched = 0,
+            isRewatching = false,
+            updatedAt = "2023-01-01T00:00:00Z"
+        )
         assertEquals(MyListStatusType.Unknown, myListStatusResponse.toDomain().status)
 
         val broadcastResponse = BroadcastResponse("invalid", "00:00")
