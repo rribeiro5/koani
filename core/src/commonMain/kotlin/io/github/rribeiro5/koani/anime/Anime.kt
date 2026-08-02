@@ -38,6 +38,12 @@ public data class Anime(
     val statistics: Statistics? = null,
 )
 
+public data class RankedAnime(
+    val anime: Anime,
+    val rank: Int,
+    val previousRank: Int? = null,
+)
+
 public data class Picture(
     val medium: String,
     val large: String? = null,
@@ -138,8 +144,12 @@ public enum class AnimeStatus {
     FinishedAiring, CurrentlyAiring, NotYetAired
 }
 
-public enum class Season {
-    Unknown, Winter, Spring, Summer, Fall
+public enum class Season(internal val value: String) {
+    Unknown("unknown"),
+    Winter("winter"),
+    Spring("spring"),
+    Summer("summer"),
+    Fall("fall")
 }
 
 public enum class Rating {
@@ -157,4 +167,21 @@ public enum class Source {
 
 public enum class DayOfWeek {
     Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Other
+}
+
+public enum class RankingType(internal val value: String) {
+    All("all"),
+    Airing("airing"),
+    Upcoming("upcoming"),
+    Tv("tv"),
+    Ova("ova"),
+    Movie("movie"),
+    Special("special"),
+    ByPopularity("bypopularity"),
+    Favorite("favorite")
+}
+
+public enum class SeasonalAnimeSort(internal val value: String) {
+    AnimeScore("anime_score"),
+    AnimeNumListUsers("anime_num_list_users")
 }

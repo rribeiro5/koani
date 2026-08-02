@@ -10,12 +10,14 @@ import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.Source
 import io.github.rribeiro5.koani.anime.dto.AlternativeTitlesResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
+import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
 import io.github.rribeiro5.koani.anime.dto.GenreResponse
 import io.github.rribeiro5.koani.anime.dto.MangaNodeResponse
 import io.github.rribeiro5.koani.anime.dto.MyListStatusResponse
 import io.github.rribeiro5.koani.anime.dto.PictureResponse
+import io.github.rribeiro5.koani.anime.dto.RankingResponse
 import io.github.rribeiro5.koani.anime.dto.RecommendationResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedAnimeResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedMangaResponse
@@ -184,5 +186,17 @@ class AnimeMapperTest {
 
         val broadcastResponse = BroadcastResponse("invalid", "00:00")
         assertNull(broadcastResponse.toDomain().dayOfTheWeek)
+    }
+
+    @Test
+    fun `AnimeRankingEdgeResponse toDomain should map fields`() {
+        val response = AnimeRankingEdgeResponse(
+            node = AnimeResponse(id = 1, title = "Cowboy Bebop"),
+            ranking = RankingResponse(rank = 1, previousRank = 2)
+        )
+        val domain = response.toDomain()
+        assertEquals(1, domain.anime.id)
+        assertEquals(1, domain.rank)
+        assertEquals(2, domain.previousRank)
     }
 }

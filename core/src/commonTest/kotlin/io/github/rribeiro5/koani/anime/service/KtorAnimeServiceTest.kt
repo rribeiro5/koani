@@ -50,4 +50,56 @@ class KtorAnimeServiceTest {
         assertEquals(1, result.id)
         assertEquals("Cowboy Bebop", result.title)
     }
+
+    @Test
+    fun `getAnimeRanking should return ranked anime list`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = AnimeResponses.ANIME_RANKING,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.getAnimeRanking(rankingType = "all")
+
+        assertEquals(1, result.data.size)
+        assertEquals(1, result.data[0].node.id)
+        assertEquals("Cowboy Bebop", result.data[0].node.title)
+        assertEquals(1, result.data[0].ranking.rank)
+    }
+
+    @Test
+    fun `getSeasonalAnimes should return seasonal anime list`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = AnimeResponses.SEASONAL_ANIME,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.getSeasonalAnimes(year = 2024, season = "spring")
+
+        assertEquals(1, result.data.size)
+        assertEquals(1, result.data[0].id)
+        assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+
+    @Test
+    fun `getSuggestedAnimes should return suggested anime list`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = AnimeResponses.SUGGESTED_ANIME,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.getSuggestedAnimes()
+
+        assertEquals(1, result.data.size)
+        assertEquals(1, result.data[0].id)
+        assertEquals("Cowboy Bebop", result.data[0].title)
+    }
 }

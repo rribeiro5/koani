@@ -13,6 +13,7 @@ import io.github.rribeiro5.koani.anime.MyListStatus
 import io.github.rribeiro5.koani.anime.MyListStatusType
 import io.github.rribeiro5.koani.anime.Nsfw
 import io.github.rribeiro5.koani.anime.Picture
+import io.github.rribeiro5.koani.anime.RankedAnime
 import io.github.rribeiro5.koani.anime.Rating
 import io.github.rribeiro5.koani.anime.Recommendation
 import io.github.rribeiro5.koani.anime.RelatedAnime
@@ -25,6 +26,7 @@ import io.github.rribeiro5.koani.anime.StatisticsStatus
 import io.github.rribeiro5.koani.anime.Studio
 import io.github.rribeiro5.koani.anime.dto.AlternativeTitlesResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
+import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
 import io.github.rribeiro5.koani.anime.dto.GenreResponse
@@ -157,6 +159,12 @@ internal fun AnimeNodeResponse.toDomain(): AnimeNode = AnimeNode(
     id = id,
     title = title,
     mainPicture = mainPicture?.toDomain()
+)
+
+internal fun AnimeRankingEdgeResponse.toDomain(): RankedAnime = RankedAnime(
+    anime = node.toDomain(),
+    rank = ranking.rank,
+    previousRank = ranking.previousRank
 )
 
 internal fun MangaNodeResponse.toDomain(): MangaNode = MangaNode(

@@ -31,4 +31,50 @@ object AnimeResponses {
           }
         }
     """.trimIndent()
+
+    val ANIME_RANKING = """
+        {
+          "data": [
+            {
+              "node": {
+                "id": 1,
+                "title": "Cowboy Bebop"
+              },
+              "ranking": {
+                "rank": 1,
+                "previous_rank": 2
+              }
+            }
+          ],
+          "paging": {}
+        }
+    """.trimIndent()
+
+    val SEASONAL_ANIME = """
+        {
+          "data": [
+            {
+              "node": {
+                "id": 1,
+                "title": "Cowboy Bebop"
+              }
+            }
+          ],
+          "paging": {}
+        }
+    """.trimIndent()
+
+    val SUGGESTED_ANIME = """
+        {
+          "data": [
+            {
+              "node": {
+                "id": 1,
+                "title": "Cowboy Bebop"
+              }
+            }
+          ],
+          "paging": {}
+        }
+    """.trimIndent()
 }

@@ -3,6 +3,8 @@ package io.github.rribeiro5.koani
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Severity
 import io.github.rribeiro5.koani.anime.AnimeField
+import io.github.rribeiro5.koani.anime.RankingType
+import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.dto.AnimeResponses
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.dto.TokenResponses
@@ -268,6 +270,64 @@ class KoaniClientTest {
         )
 
         assertEquals("id,mean,rank", capturedFields)
+    }
+
+    @Test
+    fun `getAnimeRanking should return ranked anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.ANIME_RANKING,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getAnimeRanking(RankingType.All)
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].anime.title)
+        assertEquals(1, result.data[0].rank)
+    }
+
+    @Test
+    fun `getSeasonalAnimes should return seasonal anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.SEASONAL_ANIME,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getSeasonalAnimes(2024, Season.Spring)
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+
+    @Test
+    fun `getSuggestedAnimes should return suggested anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.SUGGESTED_ANIME,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getSuggestedAnimes()
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].title)
     }
     // endregion
 }
