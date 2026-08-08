@@ -12,7 +12,7 @@ import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
-import io.github.rribeiro5.koani.anime.dto.RankingResponse
+import io.github.rribeiro5.koani.core.dto.RankingResponse
 import io.github.rribeiro5.koani.anime.dto.RecommendationResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedAnimeResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedMangaResponse

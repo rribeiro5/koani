@@ -10,7 +10,7 @@ import io.github.rribeiro5.koani.manga.MediaType
 import io.github.rribeiro5.koani.manga.dto.AuthorNodeResponse
 import io.github.rribeiro5.koani.manga.dto.AuthorResponse
 import io.github.rribeiro5.koani.manga.dto.MangaRankingEdgeResponse
-import io.github.rribeiro5.koani.manga.dto.MangaRankingResponse
+import io.github.rribeiro5.koani.core.dto.RankingResponse
 import io.github.rribeiro5.koani.manga.dto.MangaResponse
 import io.github.rribeiro5.koani.manga.dto.SerializationNodeResponse
 import io.github.rribeiro5.koani.manga.dto.SerializationResponse
@@ -104,7 +104,7 @@ class MangaMapperTest {
     fun `MangaRankingEdgeResponse toDomain should map fields`() {
         val response = MangaRankingEdgeResponse(
             node = MangaResponse(id = 1, title = "One Piece"),
-            ranking = MangaRankingResponse(rank = 1, previousRank = 2)
+            ranking = RankingResponse(rank = 1, previousRank = 2)
         )
         val domain = response.toDomain()
         assertEquals(1, domain.manga.id)

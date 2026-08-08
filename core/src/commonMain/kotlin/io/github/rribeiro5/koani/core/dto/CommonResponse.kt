@@ -28,3 +28,11 @@ internal data class GenreResponse(
     @SerialName("name")
     val name: String,
 )
+
+@Serializable
+internal data class RankingResponse(
+    @SerialName("rank")
+    val rank: Int,
+    @SerialName("previous_rank")
+    val previousRank: Int? = null,
+)

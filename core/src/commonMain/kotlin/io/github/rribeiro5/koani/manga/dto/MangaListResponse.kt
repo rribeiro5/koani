@@ -1,5 +1,6 @@
 package io.github.rribeiro5.koani.manga.dto
 
+import io.github.rribeiro5.koani.core.dto.RankingResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,13 +15,5 @@ internal data class MangaRankingEdgeResponse(
     @SerialName("node")
     val node: MangaResponse,
     @SerialName("ranking")
-    val ranking: MangaRankingResponse
-)
-
-@Serializable
-internal data class MangaRankingResponse(
-    @SerialName("rank")
-    val rank: Int,
-    @SerialName("previous_rank")
-    val previousRank: Int? = null
+    val ranking: RankingResponse
 )
