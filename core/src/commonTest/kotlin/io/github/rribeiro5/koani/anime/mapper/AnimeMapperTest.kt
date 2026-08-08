@@ -7,12 +7,10 @@ import io.github.rribeiro5.koani.anime.MyListStatusType
 import io.github.rribeiro5.koani.anime.Rating
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.Source
-import io.github.rribeiro5.koani.anime.dto.AnimeListEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
-import io.github.rribeiro5.koani.core.dto.RankingResponse
 import io.github.rribeiro5.koani.anime.dto.RecommendationResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedAnimeResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedMangaResponse
@@ -21,12 +19,12 @@ import io.github.rribeiro5.koani.anime.dto.StatisticsResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsStatusResponse
 import io.github.rribeiro5.koani.anime.dto.StudioResponse
 import io.github.rribeiro5.koani.anime.dto.UserAnimeListStatusResponse
-import io.github.rribeiro5.koani.anime.mapper.toDomain
 import io.github.rribeiro5.koani.core.Nsfw
-import io.github.rribeiro5.koani.core.mapper.toDomain
 import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
 import io.github.rribeiro5.koani.core.dto.GenreResponse
 import io.github.rribeiro5.koani.core.dto.PictureResponse
+import io.github.rribeiro5.koani.core.dto.RankingResponse
+import io.github.rribeiro5.koani.core.mapper.toDomain
 import io.github.rribeiro5.koani.manga.dto.MangaNodeResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals

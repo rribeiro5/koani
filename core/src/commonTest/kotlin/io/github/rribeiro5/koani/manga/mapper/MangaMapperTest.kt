@@ -4,13 +4,13 @@ import io.github.rribeiro5.koani.core.Nsfw
 import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
 import io.github.rribeiro5.koani.core.dto.GenreResponse
 import io.github.rribeiro5.koani.core.dto.PictureResponse
+import io.github.rribeiro5.koani.core.dto.RankingResponse
 import io.github.rribeiro5.koani.manga.MangaListStatusType
 import io.github.rribeiro5.koani.manga.MangaStatus
 import io.github.rribeiro5.koani.manga.MediaType
 import io.github.rribeiro5.koani.manga.dto.AuthorNodeResponse
 import io.github.rribeiro5.koani.manga.dto.AuthorResponse
 import io.github.rribeiro5.koani.manga.dto.MangaRankingEdgeResponse
-import io.github.rribeiro5.koani.core.dto.RankingResponse
 import io.github.rribeiro5.koani.manga.dto.MangaResponse
 import io.github.rribeiro5.koani.manga.dto.SerializationNodeResponse
 import io.github.rribeiro5.koani.manga.dto.SerializationResponse
