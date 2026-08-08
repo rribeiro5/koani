@@ -4,20 +4,13 @@ import io.github.rribeiro5.koani.anime.AnimeStatus
 import io.github.rribeiro5.koani.anime.DayOfWeek
 import io.github.rribeiro5.koani.anime.MediaType
 import io.github.rribeiro5.koani.anime.MyListStatusType
-import io.github.rribeiro5.koani.anime.Nsfw
 import io.github.rribeiro5.koani.anime.Rating
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.Source
-import io.github.rribeiro5.koani.anime.dto.AlternativeTitlesResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
-import io.github.rribeiro5.koani.anime.dto.GenreResponse
-import io.github.rribeiro5.koani.anime.dto.MangaNodeResponse
-import io.github.rribeiro5.koani.anime.dto.MyListStatusResponse
-import io.github.rribeiro5.koani.anime.dto.PictureResponse
-import io.github.rribeiro5.koani.anime.dto.RankingResponse
 import io.github.rribeiro5.koani.anime.dto.RecommendationResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedAnimeResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedMangaResponse
@@ -25,6 +18,14 @@ import io.github.rribeiro5.koani.anime.dto.StartSeasonResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsStatusResponse
 import io.github.rribeiro5.koani.anime.dto.StudioResponse
+import io.github.rribeiro5.koani.anime.dto.UserAnimeListStatusResponse
+import io.github.rribeiro5.koani.core.Nsfw
+import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
+import io.github.rribeiro5.koani.core.dto.GenreResponse
+import io.github.rribeiro5.koani.core.dto.PictureResponse
+import io.github.rribeiro5.koani.core.dto.RankingResponse
+import io.github.rribeiro5.koani.core.mapper.toDomain
+import io.github.rribeiro5.koani.manga.dto.MangaNodeResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -53,7 +54,7 @@ class AnimeMapperTest {
             mediaType = "tv",
             status = "finished_airing",
             genres = listOf(GenreResponse(1, "Sci-Fi")),
-            myListStatus = MyListStatusResponse(
+            myListStatus = UserAnimeListStatusResponse(
                 status = "watching",
                 score = 10,
                 numEpisodesWatched = 5,
@@ -189,7 +190,7 @@ class AnimeMapperTest {
         val startSeasonResponse = StartSeasonResponse(2020, "invalid")
         assertEquals(Season.Unknown, startSeasonResponse.toDomain().season)
 
-        val myListStatusResponse = MyListStatusResponse(
+        val myListStatusResponse = UserAnimeListStatusResponse(
             status = "invalid",
             score = 0,
             numEpisodesWatched = 0,

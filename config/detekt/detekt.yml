@@ -157,9 +157,9 @@ complexity:
     allowedFunctionsPerObject: 11
     allowedFunctionsPerEnum: 11
     ignoreDeprecated: false
-    ignorePrivate: false
+    ignorePrivate: true
     ignoreInternal: false
-    ignoreOverridden: false
+    ignoreOverridden: true
     ignoreAnnotatedFunctions: []
 
 coroutines:
@@ -791,7 +791,7 @@ style:
   UnnecessaryReversed:
     active: false
   UnusedImport:
-    active: false
+    active: true
     additionalOperatorSet: []
   UnusedParameter:
     active: true

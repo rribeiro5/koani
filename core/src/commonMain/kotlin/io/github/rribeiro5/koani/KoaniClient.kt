@@ -1,7 +1,7 @@
 package io.github.rribeiro5.koani
 
 import io.github.rribeiro5.koani.anime.AnimeField
-import io.github.rribeiro5.koani.anime.RankingType
+import io.github.rribeiro5.koani.anime.AnimeRankingType
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.SeasonalAnimeSort
 import io.github.rribeiro5.koani.anime.mapper.toDomain
@@ -12,14 +12,20 @@ import io.github.rribeiro5.koani.auth.mapper.toSession
 import io.github.rribeiro5.koani.core.PaginatedList
 import io.github.rribeiro5.koani.core.mapper.toPaginatedList
 import io.github.rribeiro5.koani.di.KoaniContainer
+import io.github.rribeiro5.koani.manga.MangaField
+import io.github.rribeiro5.koani.manga.MangaRankingType
+import io.github.rribeiro5.koani.manga.mapper.toDomain
 import io.github.rribeiro5.koani.util.sanitize
 import io.github.rribeiro5.koani.anime.Anime as AnimeModel
 import io.github.rribeiro5.koani.anime.RankedAnime as RankedAnimeModel
+import io.github.rribeiro5.koani.manga.Manga as MangaModel
+import io.github.rribeiro5.koani.manga.RankedManga as RankedMangaModel
 
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
     public val auth: Auth by lazy { Auth(container) }
     public val anime: Anime by lazy { Anime(container) }
+    public val manga: Manga by lazy { Manga(container) }
 
     init {
         require(container.clientId.isNotBlank()) {
@@ -107,7 +113,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         }
 
         public suspend fun getAnimeRanking(
-            rankingType: RankingType,
+            rankingType: AnimeRankingType,
             limit: Int? = null,
             offset: Int? = null,
             fields: List<AnimeField>? = null,
@@ -147,6 +153,49 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         ): PaginatedList<AnimeModel> {
             container.logger.d { "Getting suggested anime" }
             return container.animeService.getSuggestedAnimes(
+                limit = limit,
+                offset = offset,
+                fields = fields?.map { it.fieldName },
+            ).toPaginatedList { it.toDomain() }
+        }
+    }
+
+    public class Manga internal constructor(private val container: KoaniContainer) {
+        public suspend fun getMangaList(
+            query: String? = null,
+            limit: Int? = null,
+            offset: Int? = null,
+            fields: List<MangaField>? = null,
+        ): PaginatedList<MangaModel> {
+            container.logger.d { "Getting manga list${query?.let { " for query: $it" } ?: ""}" }
+            return container.mangaService.getMangaList(
+                query = query,
+                limit = limit,
+                offset = offset,
+                fields = fields?.map { it.fieldName },
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getMangaDetails(
+            mangaId: Int,
+            fields: List<MangaField>? = null,
+        ): MangaModel {
+            container.logger.d { "Getting manga details for id: $mangaId" }
+            return container.mangaService.getMangaDetails(
+                mangaId = mangaId,
+                fields = fields?.map { it.fieldName },
+            ).toDomain()
+        }
+
+        public suspend fun getMangaRanking(
+            rankingType: MangaRankingType,
+            limit: Int? = null,
+            offset: Int? = null,
+            fields: List<MangaField>? = null,
+        ): PaginatedList<RankedMangaModel> {
+            container.logger.d { "Getting manga ranking for type: ${rankingType.value}" }
+            return container.mangaService.getMangaRanking(
+                rankingType = rankingType.value,
                 limit = limit,
                 offset = offset,
                 fields = fields?.map { it.fieldName },

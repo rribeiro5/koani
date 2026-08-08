@@ -1,18 +1,12 @@
 package io.github.rribeiro5.koani.anime.mapper
 
-import io.github.rribeiro5.koani.anime.AlternativeTitles
 import io.github.rribeiro5.koani.anime.Anime
 import io.github.rribeiro5.koani.anime.AnimeNode
 import io.github.rribeiro5.koani.anime.AnimeStatus
 import io.github.rribeiro5.koani.anime.Broadcast
 import io.github.rribeiro5.koani.anime.DayOfWeek
-import io.github.rribeiro5.koani.anime.Genre
-import io.github.rribeiro5.koani.anime.MangaNode
 import io.github.rribeiro5.koani.anime.MediaType
-import io.github.rribeiro5.koani.anime.MyListStatus
 import io.github.rribeiro5.koani.anime.MyListStatusType
-import io.github.rribeiro5.koani.anime.Nsfw
-import io.github.rribeiro5.koani.anime.Picture
 import io.github.rribeiro5.koani.anime.RankedAnime
 import io.github.rribeiro5.koani.anime.Rating
 import io.github.rribeiro5.koani.anime.Recommendation
@@ -24,15 +18,11 @@ import io.github.rribeiro5.koani.anime.StartSeason
 import io.github.rribeiro5.koani.anime.Statistics
 import io.github.rribeiro5.koani.anime.StatisticsStatus
 import io.github.rribeiro5.koani.anime.Studio
-import io.github.rribeiro5.koani.anime.dto.AlternativeTitlesResponse
+import io.github.rribeiro5.koani.anime.UserAnimeListStatus
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
-import io.github.rribeiro5.koani.anime.dto.GenreResponse
-import io.github.rribeiro5.koani.anime.dto.MangaNodeResponse
-import io.github.rribeiro5.koani.anime.dto.MyListStatusResponse
-import io.github.rribeiro5.koani.anime.dto.PictureResponse
 import io.github.rribeiro5.koani.anime.dto.RecommendationResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedAnimeResponse
 import io.github.rribeiro5.koani.anime.dto.RelatedMangaResponse
@@ -40,8 +30,20 @@ import io.github.rribeiro5.koani.anime.dto.StartSeasonResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsStatusResponse
 import io.github.rribeiro5.koani.anime.dto.StudioResponse
+import io.github.rribeiro5.koani.anime.dto.UserAnimeListStatusResponse
+import io.github.rribeiro5.koani.core.AlternativeTitles
+import io.github.rribeiro5.koani.core.Genre
+import io.github.rribeiro5.koani.core.Nsfw
+import io.github.rribeiro5.koani.core.Picture
+import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
+import io.github.rribeiro5.koani.core.dto.GenreResponse
+import io.github.rribeiro5.koani.core.dto.PictureResponse
 import io.github.rribeiro5.koani.core.mapper.toDate
 import io.github.rribeiro5.koani.core.mapper.toDateTime
+import io.github.rribeiro5.koani.core.mapper.toDomain
+import io.github.rribeiro5.koani.core.mapper.toNsfw
+import io.github.rribeiro5.koani.manga.MangaNode
+import io.github.rribeiro5.koani.manga.dto.MangaNodeResponse
 import kotlin.time.Instant
 
 internal fun AnimeResponse.toDomain(): Anime = Anime(
@@ -79,23 +81,7 @@ internal fun AnimeResponse.toDomain(): Anime = Anime(
     statistics = statistics?.toDomain()
 )
 
-internal fun PictureResponse.toDomain(): Picture = Picture(
-    medium = medium,
-    large = large
-)
-
-internal fun AlternativeTitlesResponse.toDomain(): AlternativeTitles = AlternativeTitles(
-    synonyms = synonyms,
-    en = en,
-    ja = ja
-)
-
-internal fun GenreResponse.toDomain(): Genre = Genre(
-    id = id,
-    name = name
-)
-
-internal fun MyListStatusResponse.toDomain(): MyListStatus = MyListStatus(
+internal fun UserAnimeListStatusResponse.toDomain(): UserAnimeListStatus = UserAnimeListStatus(
     status = status.toMyListStatusType(),
     score = score,
     numEpisodesWatched = numEpisodesWatched,
@@ -172,13 +158,6 @@ internal fun MangaNodeResponse.toDomain(): MangaNode = MangaNode(
     title = title,
     mainPicture = mainPicture?.toDomain()
 )
-
-private fun String.toNsfw(): Nsfw? = when (this) {
-    "white" -> Nsfw.White
-    "gray" -> Nsfw.Gray
-    "black" -> Nsfw.Black
-    else -> null
-}
 
 private fun String.toMediaType(): MediaType? = when (this) {
     "tv" -> MediaType.Tv
