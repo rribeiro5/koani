@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    rebase-strategy: "disabled"
     open-pull-requests-limit: 10
 
     # Cooldown: wait 7 days after a new version is released
