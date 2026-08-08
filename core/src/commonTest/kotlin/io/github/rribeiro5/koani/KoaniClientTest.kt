@@ -15,6 +15,9 @@ import io.github.rribeiro5.koani.di.fakeLogWriter
 import io.github.rribeiro5.koani.error.BadRequestException
 import io.github.rribeiro5.koani.error.UnauthorizedException
 import io.github.rribeiro5.koani.error.dto.ErrorResponses
+import io.github.rribeiro5.koani.manga.MangaField
+import io.github.rribeiro5.koani.manga.MangaRankingType
+import io.github.rribeiro5.koani.manga.dto.MangaResponses
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -328,6 +331,112 @@ class KoaniClientTest {
 
         assertEquals(1, result.data.size)
         assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+    // endregion
+
+    // region Manga tests
+    @Test
+    fun `getMangaList should return mapped manga list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.MANGA_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.getMangaList("one piece")
+
+        assertEquals(1, result.data.size)
+        assertEquals("One Piece", result.data[0].title)
+    }
+
+    @Test
+    fun `getMangaList should pass fields to service`() = runTest {
+        var capturedFields: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedFields = it.url.parameters["fields"]
+                respond(
+                    content = MangaResponses.MANGA_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.manga.getMangaList(
+            query = "one piece",
+            fields = listOf(MangaField.ID, MangaField.TITLE, MangaField.SYNOPSIS)
+        )
+
+        assertEquals("id,title,synopsis", capturedFields)
+    }
+
+    @Test
+    fun `getMangaDetails should return mapped manga details`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.MANGA_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.getMangaDetails(1)
+
+        assertEquals(1, result.id)
+        assertEquals("One Piece", result.title)
+    }
+
+    @Test
+    fun `getMangaDetails should pass fields to service`() = runTest {
+        var capturedFields: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedFields = it.url.parameters["fields"]
+                respond(
+                    content = MangaResponses.MANGA_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.manga.getMangaDetails(
+            mangaId = 1,
+            fields = listOf(MangaField.ID, MangaField.MEAN, MangaField.RANK)
+        )
+
+        assertEquals("id,mean,rank", capturedFields)
+    }
+
+    @Test
+    fun `getMangaRanking should return ranked manga list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.MANGA_RANKING,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.getMangaRanking(MangaRankingType.All)
+
+        assertEquals(1, result.data.size)
+        assertEquals("One Piece", result.data[0].manga.title)
+        assertEquals(1, result.data[0].rank)
     }
     // endregion
 }
