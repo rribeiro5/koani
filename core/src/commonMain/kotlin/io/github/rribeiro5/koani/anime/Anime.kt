@@ -1,5 +1,10 @@
 package io.github.rribeiro5.koani.anime
 
+import io.github.rribeiro5.koani.core.AlternativeTitles
+import io.github.rribeiro5.koani.core.Genre
+import io.github.rribeiro5.koani.core.Nsfw
+import io.github.rribeiro5.koani.core.Picture
+import io.github.rribeiro5.koani.manga.MangaNode
 import kotlinx.datetime.LocalDate
 import kotlin.time.Instant
 
@@ -22,7 +27,7 @@ public data class Anime(
     val mediaType: MediaType? = null,
     val status: AnimeStatus? = null,
     val genres: List<Genre>? = null,
-    val myListStatus: MyListStatus? = null,
+    val myListStatus: UserAnimeListStatus? = null,
     val numEpisodes: Int? = null,
     val startSeason: StartSeason? = null,
     val broadcast: Broadcast? = null,
@@ -44,23 +49,7 @@ public data class RankedAnime(
     val previousRank: Int? = null,
 )
 
-public data class Picture(
-    val medium: String,
-    val large: String? = null,
-)
-
-public data class AlternativeTitles(
-    val synonyms: List<String> = emptyList(),
-    val en: String? = null,
-    val ja: String? = null,
-)
-
-public data class Genre(
-    val id: Int,
-    val name: String,
-)
-
-public data class MyListStatus(
+public data class UserAnimeListStatus(
     val status: MyListStatusType,
     val score: Int,
     val numEpisodesWatched: Int,
@@ -126,16 +115,6 @@ public data class AnimeNode(
     val mainPicture: Picture? = null,
 )
 
-public data class MangaNode(
-    val id: Int,
-    val title: String,
-    val mainPicture: Picture? = null,
-)
-
-public enum class Nsfw {
-    White, Gray, Black
-}
-
 public enum class MediaType {
     Unknown, Tv, Ova, Movie, Special, Ona, Music
 }
@@ -169,7 +148,7 @@ public enum class DayOfWeek {
     Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Other
 }
 
-public enum class RankingType(internal val value: String) {
+public enum class AnimeRankingType(internal val value: String) {
     All("all"),
     Airing("airing"),
     Upcoming("upcoming"),

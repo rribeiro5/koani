@@ -14,7 +14,6 @@ import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
 import io.github.rribeiro5.koani.anime.dto.BroadcastResponse
 import io.github.rribeiro5.koani.anime.dto.GenreResponse
-import io.github.rribeiro5.koani.anime.dto.MangaNodeResponse
 import io.github.rribeiro5.koani.anime.dto.MyListStatusResponse
 import io.github.rribeiro5.koani.anime.dto.PictureResponse
 import io.github.rribeiro5.koani.anime.dto.RankingResponse
@@ -25,6 +24,7 @@ import io.github.rribeiro5.koani.anime.dto.StartSeasonResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsStatusResponse
 import io.github.rribeiro5.koani.anime.dto.StudioResponse
+import io.github.rribeiro5.koani.manga.dto.MangaNodeResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

@@ -3,7 +3,7 @@ package io.github.rribeiro5.koani
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Severity
 import io.github.rribeiro5.koani.anime.AnimeField
-import io.github.rribeiro5.koani.anime.RankingType
+import io.github.rribeiro5.koani.anime.AnimeRankingType
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.dto.AnimeResponses
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
@@ -285,7 +285,7 @@ class KoaniClientTest {
         )
         val subject = createSubject(container)
 
-        val result = subject.anime.getAnimeRanking(RankingType.All)
+        val result = subject.anime.getAnimeRanking(AnimeRankingType.All)
 
         assertEquals(1, result.data.size)
         assertEquals("Cowboy Bebop", result.data[0].anime.title)

@@ -1,14 +1,14 @@
-package io.github.rribeiro5.koani.anime.dto
+package io.github.rribeiro5.koani.manga.dto
 
+import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
 import io.github.rribeiro5.koani.core.dto.GenreResponse
 import io.github.rribeiro5.koani.core.dto.PictureResponse
-import io.github.rribeiro5.koani.manga.dto.MangaNodeResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class AnimeResponse(
+internal data class MangaResponse(
     @SerialName("id")
     val id: Int,
     @SerialName("title")
@@ -46,19 +46,13 @@ internal data class AnimeResponse(
     @SerialName("genres")
     val genres: List<GenreResponse>? = null,
     @SerialName("my_list_status")
-    val myListStatus: UserAnimeListStatusResponse? = null,
-    @SerialName("num_episodes")
-    val numEpisodes: Int? = null,
-    @SerialName("start_season")
-    val startSeason: StartSeasonResponse? = null,
-    @SerialName("broadcast")
-    val broadcast: BroadcastResponse? = null,
-    @SerialName("source")
-    val source: String? = null,
-    @SerialName("average_episode_duration")
-    val averageEpisodeDuration: Int? = null,
-    @SerialName("rating")
-    val rating: String? = null,
+    val myListStatus: UserMangaListStatusResponse? = null,
+    @SerialName("num_volumes")
+    val numVolumes: Int? = null,
+    @SerialName("num_chapters")
+    val numChapters: Int? = null,
+    @SerialName("authors")
+    val authors: List<AuthorResponse>? = null,
     @SerialName("pictures")
     val pictures: List<PictureResponse>? = null,
     @SerialName("background")
@@ -69,22 +63,22 @@ internal data class AnimeResponse(
     val relatedManga: List<RelatedMangaResponse>? = null,
     @SerialName("recommendations")
     val recommendations: List<RecommendationResponse>? = null,
-    @SerialName("studios")
-    val studios: List<StudioResponse>? = null,
-    @SerialName("statistics")
-    val statistics: StatisticsResponse? = null,
+    @SerialName("serialization")
+    val serialization: List<SerializationResponse>? = null,
 )
 
 @Serializable
-internal data class UserAnimeListStatusResponse(
+internal data class UserMangaListStatusResponse(
     @SerialName("status")
     val status: String,
     @SerialName("score")
     val score: Int,
-    @SerialName("num_episodes_watched")
-    val numEpisodesWatched: Int,
-    @SerialName("is_rewatching")
-    val isRewatching: Boolean,
+    @SerialName("num_volumes_read")
+    val numVolumesRead: Int,
+    @SerialName("num_chapters_read")
+    val numChaptersRead: Int,
+    @SerialName("is_rereading")
+    val isRereading: Boolean,
     @SerialName("updated_at")
     val updatedAt: String,
     @SerialName("start_date")
@@ -93,10 +87,10 @@ internal data class UserAnimeListStatusResponse(
     val finishDate: String? = null,
     @SerialName("priority")
     val priority: Int? = null,
-    @SerialName("num_times_rewatched")
-    val numTimesRewatched: Int? = null,
-    @SerialName("rewatch_value")
-    val rewatchValue: Int? = null,
+    @SerialName("num_times_reread")
+    val numTimesReread: Int? = null,
+    @SerialName("reread_value")
+    val rereadValue: Int? = null,
     @SerialName("tags")
     val tags: List<String>? = null,
     @SerialName("comments")
@@ -104,19 +98,21 @@ internal data class UserAnimeListStatusResponse(
 )
 
 @Serializable
-internal data class StartSeasonResponse(
-    @SerialName("year")
-    val year: Int,
-    @SerialName("season")
-    val season: String,
+internal data class AuthorResponse(
+    @SerialName("node")
+    val node: AuthorNodeResponse,
+    @SerialName("role")
+    val role: String,
 )
 
 @Serializable
-internal data class BroadcastResponse(
-    @SerialName("day_of_the_week")
-    val dayOfTheWeek: String,
-    @SerialName("start_time")
-    val startTime: String? = null,
+internal data class AuthorNodeResponse(
+    @SerialName("id")
+    val id: Int,
+    @SerialName("first_name")
+    val firstName: String,
+    @SerialName("last_name")
+    val lastName: String,
 )
 
 @Serializable
@@ -140,49 +136,35 @@ internal data class RelatedMangaResponse(
 )
 
 @Serializable
-internal data class RecommendationResponse(
-    @SerialName("node")
-    val node: AnimeNodeResponse,
-    @SerialName("num_recommendations")
-    val numRecommendations: Int,
-)
-
-@Serializable
-internal data class StudioResponse(
-    @SerialName("id")
-    val id: Int,
-    @SerialName("name")
-    val name: String,
-)
-
-@Serializable
-internal data class StatisticsResponse(
-    @SerialName("status")
-    val status: StatisticsStatusResponse,
-    @SerialName("num_list_users")
-    val numListUsers: Int,
-)
-
-@Serializable
-internal data class StatisticsStatusResponse(
-    @SerialName("watching")
-    val watching: Int,
-    @SerialName("completed")
-    val completed: Int,
-    @SerialName("on_hold")
-    val onHold: Int,
-    @SerialName("dropped")
-    val dropped: Int,
-    @SerialName("plan_to_watch")
-    val planToWatch: Int,
-)
-
-@Serializable
-internal data class AnimeNodeResponse(
+internal data class MangaNodeResponse(
     @SerialName("id")
     val id: Int,
     @SerialName("title")
     val title: String,
     @SerialName("main_picture")
     val mainPicture: PictureResponse? = null,
+)
+
+@Serializable
+internal data class RecommendationResponse(
+    @SerialName("node")
+    val node: MangaNodeResponse,
+    @SerialName("num_recommendations")
+    val numRecommendations: Int,
+)
+
+@Serializable
+internal data class SerializationResponse(
+    @SerialName("node")
+    val node: SerializationNodeResponse,
+    @SerialName("role")
+    val role: String,
+)
+
+@Serializable
+internal data class SerializationNodeResponse(
+    @SerialName("id")
+    val id: Int,
+    @SerialName("name")
+    val name: String,
 )
