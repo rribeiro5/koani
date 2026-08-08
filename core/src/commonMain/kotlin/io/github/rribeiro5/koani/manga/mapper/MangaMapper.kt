@@ -88,52 +88,52 @@ internal fun UserMangaListStatusResponse.toDomain(): UserMangaListStatus = UserM
     comments = comments
 )
 
-internal fun AuthorResponse.toDomain(): Author = Author(
+private fun AuthorResponse.toDomain(): Author = Author(
     node = node.toDomain(),
     role = role
 )
 
-internal fun AuthorNodeResponse.toDomain(): AuthorNode = AuthorNode(
+private fun AuthorNodeResponse.toDomain(): AuthorNode = AuthorNode(
     id = id,
     firstName = firstName,
     lastName = lastName
 )
 
-internal fun RelatedAnimeResponse.toDomain(): RelatedAnime = RelatedAnime(
+private fun RelatedAnimeResponse.toDomain(): RelatedAnime = RelatedAnime(
     node = node.toDomain(),
     relationType = relationType,
     relationTypeFormatted = relationTypeFormatted
 )
 
-internal fun RelatedMangaResponse.toDomain(): RelatedManga = RelatedManga(
+private fun RelatedMangaResponse.toDomain(): RelatedManga = RelatedManga(
     node = node.toDomain(),
     relationType = relationType,
     relationTypeFormatted = relationTypeFormatted
 )
 
-internal fun AnimeNodeResponse.toDomain(): AnimeNode = AnimeNode(
+private fun AnimeNodeResponse.toDomain(): AnimeNode = AnimeNode(
     id = id,
     title = title,
     mainPicture = mainPicture?.toDomain()
 )
 
-internal fun MangaNodeResponse.toDomain(): MangaNode = MangaNode(
+private fun MangaNodeResponse.toDomain(): MangaNode = MangaNode(
     id = id,
     title = title,
     mainPicture = mainPicture?.toDomain()
 )
 
-internal fun RecommendationResponse.toDomain(): Recommendation = Recommendation(
+private fun RecommendationResponse.toDomain(): Recommendation = Recommendation(
     node = node.toDomain(),
     numRecommendations = numRecommendations
 )
 
-internal fun SerializationResponse.toDomain(): Serialization = Serialization(
+private fun SerializationResponse.toDomain(): Serialization = Serialization(
     node = node.toDomain(),
     role = role
 )
 
-internal fun SerializationNodeResponse.toDomain(): SerializationNode = SerializationNode(
+private fun SerializationNodeResponse.toDomain(): SerializationNode = SerializationNode(
     id = id,
     name = name
 )
