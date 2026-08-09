@@ -2,12 +2,12 @@ package io.github.rribeiro5.koani
 
 import io.github.rribeiro5.koani.anime.AnimeField
 import io.github.rribeiro5.koani.anime.AnimeRankingType
-import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.SeasonalAnimeSort
 import io.github.rribeiro5.koani.anime.UserAnimeListItem
 import io.github.rribeiro5.koani.anime.UserAnimeListSortOption
 import io.github.rribeiro5.koani.anime.UserAnimeListStatus
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.mapper.toDomain
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.Session
@@ -18,13 +18,18 @@ import io.github.rribeiro5.koani.core.mapper.toPaginatedList
 import io.github.rribeiro5.koani.di.KoaniContainer
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
+import io.github.rribeiro5.koani.manga.UserMangaListItem
+import io.github.rribeiro5.koani.manga.UserMangaListSortOption
+import io.github.rribeiro5.koani.manga.UserMangaListStatus
+import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import io.github.rribeiro5.koani.manga.mapper.toDomain
-import io.github.rribeiro5.koani.anime.mapper.toApiValue
 import io.github.rribeiro5.koani.util.sanitize
 import io.github.rribeiro5.koani.anime.Anime as AnimeModel
 import io.github.rribeiro5.koani.anime.RankedAnime as RankedAnimeModel
+import io.github.rribeiro5.koani.anime.mapper.toApiValue as toAnimeApiValue
 import io.github.rribeiro5.koani.manga.Manga as MangaModel
 import io.github.rribeiro5.koani.manga.RankedManga as RankedMangaModel
+import io.github.rribeiro5.koani.manga.mapper.toApiValue as toMangaApiValue
 
 public class KoaniClient internal constructor(private val container: KoaniContainer) {
 
@@ -171,10 +176,10 @@ public class KoaniClient internal constructor(private val container: KoaniContai
             limit: Int? = null,
             offset: Int? = null,
         ): PaginatedList<UserAnimeListItem> {
-            container.logger.d { "Getting user anime list for user name: $userName" }
+            container.logger.d { "Getting user anime list for user: $userName" }
             return container.animeService.getUserAnimeList(
                 userName = userName,
-                status = status?.takeIf { it != UserAnimeListStatusType.Unknown }?.toApiValue(),
+                status = status?.takeIf { it != UserAnimeListStatusType.Unknown }?.toAnimeApiValue(),
                 sort = sortOption?.value,
                 limit = limit,
                 offset = offset,
@@ -196,7 +201,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
             container.logger.d { "Updating user anime list status for id: $animeId" }
             return container.animeService.updateUserAnimeListStatus(
                 animeId = animeId,
-                status = status?.takeIf { it != UserAnimeListStatusType.Unknown }?.toApiValue(),
+                status = status?.takeIf { it != UserAnimeListStatusType.Unknown }?.toAnimeApiValue(),
                 isRewatching = isRewatching,
                 score = score,
                 numEpisodesWatched = numWatchedEpisodes,
@@ -256,6 +261,57 @@ public class KoaniClient internal constructor(private val container: KoaniContai
                 offset = offset,
                 fields = fields?.map { it.fieldName },
             ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getUserMangaList(
+            userName: String = "@me",
+            status: UserMangaListStatusType? = null,
+            sortOption: UserMangaListSortOption? = null,
+            limit: Int? = null,
+            offset: Int? = null,
+        ): PaginatedList<UserMangaListItem> {
+            container.logger.d { "Getting user manga list for user: $userName" }
+            return container.mangaService.getUserMangaList(
+                userName = userName,
+                status = status?.takeIf { it != UserMangaListStatusType.Unknown }?.toMangaApiValue(),
+                sort = sortOption?.value,
+                limit = limit,
+                offset = offset,
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun updateUserMangaListStatus(
+            mangaId: Int,
+            status: UserMangaListStatusType? = null,
+            isRereading: Boolean? = null,
+            score: Int? = null,
+            numVolumesRead: Int? = null,
+            numChaptersRead: Int? = null,
+            priority: Int? = null,
+            numTimesReread: Int? = null,
+            rereadValue: Int? = null,
+            tags: List<String>? = null,
+            comments: String? = null,
+        ): UserMangaListStatus {
+            container.logger.d { "Updating user manga list status for id: $mangaId" }
+            return container.mangaService.updateUserMangaListStatus(
+                mangaId = mangaId,
+                status = status?.takeIf { it != UserMangaListStatusType.Unknown }?.toMangaApiValue(),
+                isRereading = isRereading,
+                score = score,
+                numVolumesRead = numVolumesRead,
+                numChaptersRead = numChaptersRead,
+                priority = priority,
+                numTimesReread = numTimesReread,
+                rereadValue = rereadValue,
+                tags = tags,
+                comments = comments,
+            ).toDomain()
+        }
+
+        public suspend fun deleteUserMangaListItem(mangaId: Int) {
+            container.logger.d { "Deleting user manga list item for id: $mangaId" }
+            container.mangaService.deleteUserMangaListItem(mangaId = mangaId)
         }
     }
 

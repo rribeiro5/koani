@@ -19,6 +19,8 @@ import io.github.rribeiro5.koani.error.UnauthorizedException
 import io.github.rribeiro5.koani.error.dto.ErrorResponses
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
+import io.github.rribeiro5.koani.manga.UserMangaListSortOption
+import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import io.github.rribeiro5.koani.manga.dto.MangaResponses
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -517,6 +519,110 @@ class KoaniClientTest {
         assertEquals(1, result.data.size)
         assertEquals("One Piece", result.data[0].manga.title)
         assertEquals(1, result.data[0].rank)
+    }
+
+    @Test
+    fun `getUserMangaList should return mapped user manga list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.USER_MANGA_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.getUserMangaList()
+
+        assertEquals(1, result.data.size)
+        assertEquals("One Piece", result.data[0].manga.title)
+        assertEquals(UserMangaListStatusType.Reading, result.data[0].listStatus.status)
+    }
+
+    @Test
+    fun `getUserMangaList should pass parameters to service`() = runTest {
+        var capturedStatus: String? = null
+        var capturedSort: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedStatus = it.url.parameters["status"]
+                capturedSort = it.url.parameters["sort"]
+                respond(
+                    content = MangaResponses.USER_MANGA_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.manga.getUserMangaList(
+            status = UserMangaListStatusType.Reading,
+            sortOption = UserMangaListSortOption.Score
+        )
+
+        assertEquals("reading", capturedStatus)
+        assertEquals("list_score", capturedSort)
+    }
+
+    @Test
+    fun `updateUserMangaListStatus should return mapped updated status`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.UPDATE_USER_MANGA_LIST_STATUS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.updateUserMangaListStatus(
+            mangaId = 1,
+            status = UserMangaListStatusType.Reading,
+            score = 10
+        )
+
+        assertEquals(UserMangaListStatusType.Reading, result.status)
+        assertEquals(10, result.score)
+    }
+
+    @Test
+    fun `deleteUserMangaListItem should complete successfully`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = "",
+                    status = HttpStatusCode.OK
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.manga.deleteUserMangaListItem(mangaId = 1)
+    }
+
+    @Test
+    fun `deleteUserMangaListItem should throw NotFoundException on 404 error`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ErrorResponses.NOT_FOUND,
+                    status = HttpStatusCode.NotFound,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val exception = assertFailsWith<NotFoundException> {
+            subject.manga.deleteUserMangaListItem(mangaId = 1)
+        }
+
+        assertEquals("not_found", exception.error)
     }
     // endregion
 }
