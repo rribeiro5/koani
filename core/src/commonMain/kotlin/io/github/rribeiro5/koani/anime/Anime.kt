@@ -49,8 +49,13 @@ public data class RankedAnime(
     val previousRank: Int? = null,
 )
 
+public data class UserAnimeListItem(
+    val anime: Anime,
+    val listStatus: UserAnimeListStatus,
+)
+
 public data class UserAnimeListStatus(
-    val status: MyListStatusType,
+    val status: UserAnimeListStatusType,
     val score: Int,
     val numEpisodesWatched: Int,
     val isRewatching: Boolean,
@@ -135,7 +140,7 @@ public enum class Rating {
     G, Pg, Pg13, R, RPlus, Rx
 }
 
-public enum class MyListStatusType {
+public enum class UserAnimeListStatusType {
     Unknown, Watching, Completed, OnHold, Dropped, PlanToWatch
 }
 
@@ -163,4 +168,11 @@ public enum class AnimeRankingType(internal val value: String) {
 public enum class SeasonalAnimeSort(internal val value: String) {
     AnimeScore("anime_score"),
     AnimeNumListUsers("anime_num_list_users")
+}
+
+public enum class UserAnimeListSortOption(internal val value: String) {
+    Score("list_score"),
+    UpdatedAt("list_updated_at"),
+    Title("anime_title"),
+    StartDate("anime_start_date"),
 }

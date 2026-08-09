@@ -2,8 +2,12 @@ package io.github.rribeiro5.koani
 
 import io.github.rribeiro5.koani.anime.AnimeField
 import io.github.rribeiro5.koani.anime.AnimeRankingType
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.SeasonalAnimeSort
+import io.github.rribeiro5.koani.anime.UserAnimeListItem
+import io.github.rribeiro5.koani.anime.UserAnimeListSortOption
+import io.github.rribeiro5.koani.anime.UserAnimeListStatus
 import io.github.rribeiro5.koani.anime.mapper.toDomain
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.Session
@@ -15,6 +19,7 @@ import io.github.rribeiro5.koani.di.KoaniContainer
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
 import io.github.rribeiro5.koani.manga.mapper.toDomain
+import io.github.rribeiro5.koani.anime.mapper.toApiValue
 import io.github.rribeiro5.koani.util.sanitize
 import io.github.rribeiro5.koani.anime.Anime as AnimeModel
 import io.github.rribeiro5.koani.anime.RankedAnime as RankedAnimeModel
@@ -157,6 +162,57 @@ public class KoaniClient internal constructor(private val container: KoaniContai
                 offset = offset,
                 fields = fields?.map { it.fieldName },
             ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getUserAnimeList(
+            userName: String = "@me",
+            status: UserAnimeListStatusType? = null,
+            sortOption: UserAnimeListSortOption? = null,
+            limit: Int? = null,
+            offset: Int? = null,
+        ): PaginatedList<UserAnimeListItem> {
+            container.logger.d { "Getting user anime list for user name: $userName" }
+            return container.animeService.getUserAnimeList(
+                userName = userName,
+                status = status?.takeIf { it != UserAnimeListStatusType.Unknown }?.toApiValue(),
+                sort = sortOption?.value,
+                limit = limit,
+                offset = offset,
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun updateUserAnimeListStatus(
+            animeId: Int,
+            status: UserAnimeListStatusType? = null,
+            isRewatching: Boolean? = null,
+            score: Int? = null,
+            numWatchedEpisodes: Int? = null,
+            priority: Int? = null,
+            numTimesRewatched: Int? = null,
+            rewatchValue: Int? = null,
+            tags: List<String>? = null,
+            comments: String? = null,
+        ): UserAnimeListStatus {
+            container.logger.d { "Updating user anime list status for id: $animeId" }
+            return container.animeService.updateUserAnimeListStatus(
+                animeId = animeId,
+                status = status?.takeIf { it != UserAnimeListStatusType.Unknown }?.toApiValue(),
+                isRewatching = isRewatching,
+                score = score,
+                numEpisodesWatched = numWatchedEpisodes,
+                priority = priority,
+                numTimesRewatched = numTimesRewatched,
+                rewatchValue = rewatchValue,
+                tags = tags,
+                comments = comments,
+            ).toDomain()
+        }
+
+        public suspend fun deleteUserAnimeListStatus(
+            animeId: Int,
+        ) {
+            container.logger.d { "Deleting user anime list status for id: $animeId" }
+            container.animeService.deleteUserAnimeListItem(animeId = animeId)
         }
     }
 

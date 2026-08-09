@@ -6,7 +6,6 @@ import io.github.rribeiro5.koani.anime.AnimeStatus
 import io.github.rribeiro5.koani.anime.Broadcast
 import io.github.rribeiro5.koani.anime.DayOfWeek
 import io.github.rribeiro5.koani.anime.MediaType
-import io.github.rribeiro5.koani.anime.MyListStatusType
 import io.github.rribeiro5.koani.anime.RankedAnime
 import io.github.rribeiro5.koani.anime.Rating
 import io.github.rribeiro5.koani.anime.Recommendation
@@ -18,7 +17,9 @@ import io.github.rribeiro5.koani.anime.StartSeason
 import io.github.rribeiro5.koani.anime.Statistics
 import io.github.rribeiro5.koani.anime.StatisticsStatus
 import io.github.rribeiro5.koani.anime.Studio
+import io.github.rribeiro5.koani.anime.UserAnimeListItem
 import io.github.rribeiro5.koani.anime.UserAnimeListStatus
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
@@ -30,14 +31,8 @@ import io.github.rribeiro5.koani.anime.dto.StartSeasonResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsStatusResponse
 import io.github.rribeiro5.koani.anime.dto.StudioResponse
+import io.github.rribeiro5.koani.anime.dto.UserAnimeListEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.UserAnimeListStatusResponse
-import io.github.rribeiro5.koani.core.AlternativeTitles
-import io.github.rribeiro5.koani.core.Genre
-import io.github.rribeiro5.koani.core.Nsfw
-import io.github.rribeiro5.koani.core.Picture
-import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
-import io.github.rribeiro5.koani.core.dto.GenreResponse
-import io.github.rribeiro5.koani.core.dto.PictureResponse
 import io.github.rribeiro5.koani.core.mapper.toDate
 import io.github.rribeiro5.koani.core.mapper.toDateTime
 import io.github.rribeiro5.koani.core.mapper.toDomain
@@ -153,6 +148,11 @@ internal fun AnimeRankingEdgeResponse.toDomain(): RankedAnime = RankedAnime(
     previousRank = ranking.previousRank
 )
 
+internal fun UserAnimeListEdgeResponse.toDomain(): UserAnimeListItem = UserAnimeListItem(
+    anime = node.toDomain(),
+    listStatus = listStatus.toDomain()
+)
+
 internal fun MangaNodeResponse.toDomain(): MangaNode = MangaNode(
     id = id,
     title = title,
@@ -195,13 +195,22 @@ private fun String.toRating(): Rating? = when (this) {
     else -> null
 }
 
-private fun String.toMyListStatusType(): MyListStatusType = when (this) {
-    "watching" -> MyListStatusType.Watching
-    "completed" -> MyListStatusType.Completed
-    "on_hold" -> MyListStatusType.OnHold
-    "dropped" -> MyListStatusType.Dropped
-    "plan_to_watch" -> MyListStatusType.PlanToWatch
-    else -> MyListStatusType.Unknown
+private fun String.toMyListStatusType(): UserAnimeListStatusType = when (this) {
+    "watching" -> UserAnimeListStatusType.Watching
+    "completed" -> UserAnimeListStatusType.Completed
+    "on_hold" -> UserAnimeListStatusType.OnHold
+    "dropped" -> UserAnimeListStatusType.Dropped
+    "plan_to_watch" -> UserAnimeListStatusType.PlanToWatch
+    else -> UserAnimeListStatusType.Unknown
+}
+
+internal fun UserAnimeListStatusType.toApiValue(): String = when (this) {
+    UserAnimeListStatusType.Watching -> "watching"
+    UserAnimeListStatusType.Completed -> "completed"
+    UserAnimeListStatusType.OnHold -> "on_hold"
+    UserAnimeListStatusType.Dropped -> "dropped"
+    UserAnimeListStatusType.PlanToWatch -> "plan_to_watch"
+    UserAnimeListStatusType.Unknown -> "unknown"
 }
 
 private fun String.toSource(): Source? = when (this) {
