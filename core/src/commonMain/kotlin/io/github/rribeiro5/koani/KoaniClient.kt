@@ -208,7 +208,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
             ).toDomain()
         }
 
-        public suspend fun deleteUserAnimeListStatus(
+        public suspend fun deleteUserAnimeListItem(
             animeId: Int,
         ) {
             container.logger.d { "Deleting user anime list status for id: $animeId" }

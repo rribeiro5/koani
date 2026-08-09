@@ -7,4 +7,11 @@ internal object ErrorResponses {
             "message": "The provided authorization grant is invalid."
         }
     """
+
+    const val NOT_FOUND = """
+        {
+            "error": "not_found",
+            "message": "The requested resource was not found."
+        }
+    """
 }

@@ -5,6 +5,7 @@ import co.touchlab.kermit.Severity
 import io.github.rribeiro5.koani.anime.AnimeField
 import io.github.rribeiro5.koani.anime.AnimeRankingType
 import io.github.rribeiro5.koani.anime.Season
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.dto.AnimeResponses
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.dto.TokenResponses
@@ -13,6 +14,7 @@ import io.github.rribeiro5.koani.di.assertContains
 import io.github.rribeiro5.koani.di.fakeContainer
 import io.github.rribeiro5.koani.di.fakeLogWriter
 import io.github.rribeiro5.koani.error.BadRequestException
+import io.github.rribeiro5.koani.error.NotFoundException
 import io.github.rribeiro5.koani.error.UnauthorizedException
 import io.github.rribeiro5.koani.error.dto.ErrorResponses
 import io.github.rribeiro5.koani.manga.MangaField
@@ -331,6 +333,84 @@ class KoaniClientTest {
 
         assertEquals(1, result.data.size)
         assertEquals("Cowboy Bebop", result.data[0].title)
+    }
+
+    @Test
+    fun `getUserAnimeList should return mapped user anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.USER_ANIME_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getUserAnimeList()
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].anime.title)
+        assertEquals(UserAnimeListStatusType.Watching, result.data[0].listStatus.status)
+    }
+
+    @Test
+    fun `updateUserAnimeListStatus should return mapped updated status`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.UPDATE_USER_ANIME_LIST_STATUS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.updateUserAnimeListStatus(
+            animeId = 1,
+            status = UserAnimeListStatusType.Watching,
+            score = 10
+        )
+
+        assertEquals(UserAnimeListStatusType.Watching, result.status)
+        assertEquals(10, result.score)
+    }
+
+    @Test
+    fun `deleteUserAnimeListItem should complete successfully`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = "",
+                    status = HttpStatusCode.OK
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.anime.deleteUserAnimeListItem(animeId = 1)
+    }
+
+    @Test
+    fun `deleteUserAnimeListItem should throw NotFoundException on 404 error`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ErrorResponses.NOT_FOUND,
+                    status = HttpStatusCode.NotFound,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val exception = assertFailsWith<NotFoundException> {
+            subject.anime.deleteUserAnimeListItem(animeId = 1)
+        }
+
+        assertEquals("not_found", exception.error)
     }
     // endregion
 
