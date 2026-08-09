@@ -102,4 +102,53 @@ class KtorAnimeServiceTest {
         assertEquals(1, result.data[0].id)
         assertEquals("Cowboy Bebop", result.data[0].title)
     }
+
+    @Test
+    fun `getUserAnimeList should return user anime list`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = AnimeResponses.USER_ANIME_LIST,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.getUserAnimeList(userName = "@me")
+
+        assertEquals(1, result.data.size)
+        assertEquals(1, result.data[0].node.id)
+        assertEquals("watching", result.data[0].listStatus.status)
+    }
+
+    @Test
+    fun `updateUserAnimeListStatus should return updated status`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = AnimeResponses.UPDATE_USER_ANIME_LIST_STATUS,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.updateUserAnimeListStatus(
+            animeId = 1,
+            status = "watching",
+            score = 10
+        )
+
+        assertEquals("watching", result.status)
+        assertEquals(10, result.score)
+    }
+
+    @Test
+    fun `deleteUserAnimeListItem should complete successfully`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = "",
+                status = HttpStatusCode.OK
+            )
+        }
+
+        subject.deleteUserAnimeListItem(animeId = 1)
+    }
 }

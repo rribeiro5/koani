@@ -17,3 +17,11 @@ internal data class AnimeRankingEdgeResponse(
     @SerialName("ranking")
     val ranking: RankingResponse
 )
+
+@Serializable
+internal data class UserAnimeListEdgeResponse(
+    @SerialName("node")
+    val node: AnimeResponse,
+    @SerialName("list_status")
+    val listStatus: UserAnimeListStatusResponse
+)

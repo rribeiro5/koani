@@ -45,8 +45,13 @@ public data class RankedManga(
     val previousRank: Int? = null,
 )
 
+public data class UserMangaListItem(
+    val manga: Manga,
+    val listStatus: UserMangaListStatus,
+)
+
 public data class UserMangaListStatus(
-    val status: MangaListStatusType? = null,
+    val status: UserMangaListStatusType? = null,
     val score: Int,
     val numVolumesRead: Int,
     val numChaptersRead: Int,
@@ -61,7 +66,7 @@ public data class UserMangaListStatus(
     val comments: String? = null,
 )
 
-public enum class MangaListStatusType {
+public enum class UserMangaListStatusType {
     Unknown, Reading, Completed, OnHold, Dropped, PlanToRead
 }
 
@@ -127,4 +132,11 @@ public enum class MangaRankingType(internal val value: String) {
     Manhua("manhua"),
     ByPopularity("bypopularity"),
     Favorite("favorite")
+}
+
+public enum class UserMangaListSortOption(internal val value: String) {
+    Score("list_score"),
+    UpdatedAt("list_updated_at"),
+    Title("manga_title"),
+    StartDate("manga_start_date"),
 }

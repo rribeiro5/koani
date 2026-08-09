@@ -68,4 +68,53 @@ class KtorMangaServiceTest {
         assertEquals("One Piece", result.data[0].node.title)
         assertEquals(1, result.data[0].ranking.rank)
     }
+
+    @Test
+    fun `getUserMangaList should return user manga list`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = MangaResponses.USER_MANGA_LIST,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.getUserMangaList(userName = "@me")
+
+        assertEquals(1, result.data.size)
+        assertEquals(1, result.data[0].node.id)
+        assertEquals("reading", result.data[0].listStatus.status)
+    }
+
+    @Test
+    fun `updateUserMangaListStatus should return updated status`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = MangaResponses.UPDATE_USER_MANGA_LIST_STATUS,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val result = subject.updateUserMangaListStatus(
+            mangaId = 1,
+            status = "reading",
+            score = 10
+        )
+
+        assertEquals("reading", result.status)
+        assertEquals(10, result.score)
+    }
+
+    @Test
+    fun `deleteUserMangaListItem should complete successfully`() = runTest {
+        val subject = createSubject {
+            respond(
+                content = "",
+                status = HttpStatusCode.OK
+            )
+        }
+
+        subject.deleteUserMangaListItem(mangaId = 1)
+    }
 }

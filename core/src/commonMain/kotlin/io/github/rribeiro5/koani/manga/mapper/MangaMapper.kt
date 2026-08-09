@@ -2,34 +2,27 @@ package io.github.rribeiro5.koani.manga.mapper
 
 import io.github.rribeiro5.koani.anime.AnimeNode
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
-import io.github.rribeiro5.koani.core.AlternativeTitles
-import io.github.rribeiro5.koani.core.Genre
-import io.github.rribeiro5.koani.core.Nsfw
-import io.github.rribeiro5.koani.core.Picture
-import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
-import io.github.rribeiro5.koani.core.dto.GenreResponse
-import io.github.rribeiro5.koani.core.dto.PictureResponse
-import io.github.rribeiro5.koani.core.mapper.toDomain
-import io.github.rribeiro5.koani.core.mapper.toNsfw
 import io.github.rribeiro5.koani.core.mapper.toDate
 import io.github.rribeiro5.koani.core.mapper.toDateTime
+import io.github.rribeiro5.koani.core.mapper.toDomain
+import io.github.rribeiro5.koani.core.mapper.toNsfw
 import io.github.rribeiro5.koani.manga.Author
 import io.github.rribeiro5.koani.manga.AuthorNode
 import io.github.rribeiro5.koani.manga.Manga
-import io.github.rribeiro5.koani.manga.MangaListStatusType
-import io.github.rribeiro5.koani.manga.MediaType
-import io.github.rribeiro5.koani.manga.UserMangaListStatus
-import io.github.rribeiro5.koani.manga.MangaStatus
 import io.github.rribeiro5.koani.manga.MangaNode
+import io.github.rribeiro5.koani.manga.MangaStatus
+import io.github.rribeiro5.koani.manga.MediaType
 import io.github.rribeiro5.koani.manga.RankedManga
 import io.github.rribeiro5.koani.manga.Recommendation
 import io.github.rribeiro5.koani.manga.RelatedAnime
 import io.github.rribeiro5.koani.manga.RelatedManga
 import io.github.rribeiro5.koani.manga.Serialization
 import io.github.rribeiro5.koani.manga.SerializationNode
+import io.github.rribeiro5.koani.manga.UserMangaListItem
+import io.github.rribeiro5.koani.manga.UserMangaListStatus
+import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import io.github.rribeiro5.koani.manga.dto.AuthorNodeResponse
 import io.github.rribeiro5.koani.manga.dto.AuthorResponse
-import io.github.rribeiro5.koani.manga.dto.UserMangaListStatusResponse
 import io.github.rribeiro5.koani.manga.dto.MangaNodeResponse
 import io.github.rribeiro5.koani.manga.dto.MangaRankingEdgeResponse
 import io.github.rribeiro5.koani.manga.dto.MangaResponse
@@ -38,7 +31,8 @@ import io.github.rribeiro5.koani.manga.dto.RelatedAnimeResponse
 import io.github.rribeiro5.koani.manga.dto.RelatedMangaResponse
 import io.github.rribeiro5.koani.manga.dto.SerializationNodeResponse
 import io.github.rribeiro5.koani.manga.dto.SerializationResponse
-import kotlinx.datetime.LocalDate
+import io.github.rribeiro5.koani.manga.dto.UserMangaListEdgeResponse
+import io.github.rribeiro5.koani.manga.dto.UserMangaListStatusResponse
 import kotlin.time.Instant
 
 internal fun MangaResponse.toDomain(): Manga = Manga(
@@ -144,6 +138,11 @@ internal fun MangaRankingEdgeResponse.toDomain(): RankedManga = RankedManga(
     previousRank = ranking.previousRank
 )
 
+internal fun UserMangaListEdgeResponse.toDomain(): UserMangaListItem = UserMangaListItem(
+    manga = node.toDomain(),
+    listStatus = listStatus.toDomain()
+)
+
 private fun String.toMediaType(): MediaType? = when (this) {
     "manga" -> MediaType.Manga
     "novel" -> MediaType.Novel
@@ -165,11 +164,20 @@ private fun String.toMangaStatus(): MangaStatus? = when (this) {
     else -> null
 }
 
-private fun String.toMangaListStatusType(): MangaListStatusType = when (this) {
-    "reading" -> MangaListStatusType.Reading
-    "completed" -> MangaListStatusType.Completed
-    "on_hold" -> MangaListStatusType.OnHold
-    "dropped" -> MangaListStatusType.Dropped
-    "plan_to_read" -> MangaListStatusType.PlanToRead
-    else -> MangaListStatusType.Unknown
+private fun String.toMangaListStatusType(): UserMangaListStatusType = when (this) {
+    "reading" -> UserMangaListStatusType.Reading
+    "completed" -> UserMangaListStatusType.Completed
+    "on_hold" -> UserMangaListStatusType.OnHold
+    "dropped" -> UserMangaListStatusType.Dropped
+    "plan_to_read" -> UserMangaListStatusType.PlanToRead
+    else -> UserMangaListStatusType.Unknown
+}
+
+internal fun UserMangaListStatusType.toApiValue(): String = when (this) {
+    UserMangaListStatusType.Reading -> "reading"
+    UserMangaListStatusType.Completed -> "completed"
+    UserMangaListStatusType.OnHold -> "on_hold"
+    UserMangaListStatusType.Dropped -> "dropped"
+    UserMangaListStatusType.PlanToRead -> "plan_to_read"
+    UserMangaListStatusType.Unknown -> "unknown"
 }
