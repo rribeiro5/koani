@@ -23,10 +23,13 @@ import io.github.rribeiro5.koani.manga.UserMangaListSortOption
 import io.github.rribeiro5.koani.manga.UserMangaListStatus
 import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import io.github.rribeiro5.koani.manga.mapper.toDomain
+import io.github.rribeiro5.koani.user.UserField
+import io.github.rribeiro5.koani.user.mapper.toDomain
 import io.github.rribeiro5.koani.util.sanitize
 import io.github.rribeiro5.koani.anime.Anime as AnimeModel
 import io.github.rribeiro5.koani.anime.RankedAnime as RankedAnimeModel
 import io.github.rribeiro5.koani.anime.mapper.toApiValue as toAnimeApiValue
+import io.github.rribeiro5.koani.user.User as UserModel
 import io.github.rribeiro5.koani.manga.Manga as MangaModel
 import io.github.rribeiro5.koani.manga.RankedManga as RankedMangaModel
 import io.github.rribeiro5.koani.manga.mapper.toApiValue as toMangaApiValue
@@ -36,6 +39,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
     public val auth: Auth by lazy { Auth(container) }
     public val anime: Anime by lazy { Anime(container) }
     public val manga: Manga by lazy { Manga(container) }
+    public val user: User by lazy { User(container) }
 
     init {
         require(container.clientId.isNotBlank()) {
@@ -312,6 +316,19 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         public suspend fun deleteUserMangaListItem(mangaId: Int) {
             container.logger.d { "Deleting user manga list item for id: $mangaId" }
             container.mangaService.deleteUserMangaListItem(mangaId = mangaId)
+        }
+    }
+
+    public class User internal constructor(private val container: KoaniContainer) {
+        public suspend fun getUserDetails(
+            userName: String = "@me",
+            fields: List<UserField>? = null,
+        ): UserModel {
+            container.logger.d { "Getting user details for user: $userName" }
+            return container.userService.getUserDetails(
+                userName = userName,
+                fields = fields?.map { it.fieldName },
+            ).toDomain()
         }
     }
 

@@ -22,6 +22,8 @@ import io.github.rribeiro5.koani.manga.MangaRankingType
 import io.github.rribeiro5.koani.manga.UserMangaListSortOption
 import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import io.github.rribeiro5.koani.manga.dto.MangaResponses
+import io.github.rribeiro5.koani.user.UserField
+import io.github.rribeiro5.koani.user.dto.UserResponses
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -623,6 +625,54 @@ class KoaniClientTest {
         }
 
         assertEquals("not_found", exception.error)
+    }
+    // endregion
+
+    // region User tests
+    @Test
+    fun `getUserDetails should return mapped user details`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = UserResponses.USER_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.user.getUserDetails()
+
+        assertEquals(1, result.id)
+        assertEquals("testuser", result.name)
+        assertEquals("male", result.gender)
+    }
+
+    @Test
+    fun `getUserDetails should pass fields and userName to service`() = runTest {
+        var capturedFields: String? = null
+        var capturedUserName: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedFields = it.url.parameters["fields"]
+                capturedUserName = it.url.encodedPath.split("/").last()
+                respond(
+                    content = UserResponses.USER_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.user.getUserDetails(
+            userName = "rribeiro",
+            fields = listOf(UserField.ID, UserField.NAME, UserField.ANIME_STATISTICS)
+        )
+
+        assertEquals("id,name,anime_statistics", capturedFields)
+        assertEquals("rribeiro", capturedUserName)
     }
     // endregion
 }
