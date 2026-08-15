@@ -13,7 +13,7 @@ plugins {
 detekt {
     toolVersion = libs.versions.detekt.get()
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-    baseline = file("$rootDir/config/detekt/detekt-baseline.xml")
+    baseline = file("detekt-baseline.xml")
     source.setFrom(files("src"))
 }
 
