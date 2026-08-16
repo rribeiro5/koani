@@ -29,4 +29,5 @@ dependencyResolutionManagement {
     }
 }
 include(":core")
+include(":auth-persistence-ksafe")
 

@@ -10,6 +10,7 @@ ktor = "3.5.2"
 detekt = "2.0.0-alpha.3"
 kover = "0.9.9"
 kermit = "2.1.0"
+ksafe = "3.0.0"
 
 [libraries]
 
@@ -34,6 +35,7 @@ ktor-client-winhttp = { module = "io.ktor:ktor-client-winhttp", version.ref = "k
 detekt-formatting = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
+ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
 
 [plugins]
 
