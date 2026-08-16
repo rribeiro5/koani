@@ -26,8 +26,8 @@ kotlin {
 
     android {
         namespace = "io.github.rribeiro5.koani.core"
-        compileSdk = 36
-        minSdk = 23
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
         androidResources.enable = true
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
