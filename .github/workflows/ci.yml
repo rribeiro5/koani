@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kover-report
-          path: core/build/reports/kover/html
+          path: build/reports/kover/html
