@@ -33,7 +33,15 @@ jobs:
 
       - name: Run Tests and Coverage
         # Using check to run all tests compatible with the host (skips iOS on Linux)
-        run: ./gradlew check koverHtmlReport
+        run: ./gradlew check koverHtmlReport koverXmlReport
+
+      - name: Report Test Results
+        if: always()
+        run: python scripts/report_tests.py >> $GITHUB_STEP_SUMMARY
+
+      - name: Report Coverage
+        if: always()
+        run: python scripts/report_coverage.py >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
