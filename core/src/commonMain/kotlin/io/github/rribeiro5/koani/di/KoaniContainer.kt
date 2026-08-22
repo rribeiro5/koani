@@ -8,6 +8,8 @@ import co.touchlab.kermit.platformLogWriter
 import io.github.rribeiro5.koani.LogLevel
 import io.github.rribeiro5.koani.anime.service.AnimeService
 import io.github.rribeiro5.koani.anime.service.KtorAnimeService
+import io.github.rribeiro5.koani.forum.service.ForumService
+import io.github.rribeiro5.koani.forum.service.KtorForumService
 import io.github.rribeiro5.koani.user.service.UserService
 import io.github.rribeiro5.koani.user.service.KtorUserService
 import io.github.rribeiro5.koani.manga.service.KtorMangaService
@@ -78,6 +80,8 @@ internal class KoaniContainer(
     val animeService: AnimeService = KtorAnimeService(httpClient)
 
     val mangaService: MangaService = KtorMangaService(httpClient)
+
+    val forumService: ForumService = KtorForumService(httpClient)
 
     val userService: UserService = KtorUserService(httpClient)
 }
