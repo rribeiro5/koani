@@ -4,5 +4,10 @@ plugins {
     alias(libs.plugins.maven.publish).apply(false)
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.detekt).apply(false)
-    alias(libs.plugins.kover).apply(false)
+    alias(libs.plugins.kover)
+}
+
+dependencies {
+    kover(project(":core"))
+    kover(project(":auth-persistence-ksafe"))
 }

@@ -5,6 +5,7 @@ import co.touchlab.kermit.Severity
 import io.github.rribeiro5.koani.anime.AnimeField
 import io.github.rribeiro5.koani.anime.AnimeRankingType
 import io.github.rribeiro5.koani.anime.Season
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.dto.AnimeResponses
 import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import io.github.rribeiro5.koani.auth.dto.TokenResponses
@@ -13,11 +14,16 @@ import io.github.rribeiro5.koani.di.assertContains
 import io.github.rribeiro5.koani.di.fakeContainer
 import io.github.rribeiro5.koani.di.fakeLogWriter
 import io.github.rribeiro5.koani.error.BadRequestException
+import io.github.rribeiro5.koani.error.NotFoundException
 import io.github.rribeiro5.koani.error.UnauthorizedException
 import io.github.rribeiro5.koani.error.dto.ErrorResponses
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
+import io.github.rribeiro5.koani.manga.UserMangaListSortOption
+import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import io.github.rribeiro5.koani.manga.dto.MangaResponses
+import io.github.rribeiro5.koani.user.UserField
+import io.github.rribeiro5.koani.user.dto.UserResponses
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -332,6 +338,84 @@ class KoaniClientTest {
         assertEquals(1, result.data.size)
         assertEquals("Cowboy Bebop", result.data[0].title)
     }
+
+    @Test
+    fun `getUserAnimeList should return mapped user anime list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.USER_ANIME_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.getUserAnimeList()
+
+        assertEquals(1, result.data.size)
+        assertEquals("Cowboy Bebop", result.data[0].anime.title)
+        assertEquals(UserAnimeListStatusType.Watching, result.data[0].listStatus.status)
+    }
+
+    @Test
+    fun `updateUserAnimeListStatus should return mapped updated status`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = AnimeResponses.UPDATE_USER_ANIME_LIST_STATUS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.anime.updateUserAnimeListStatus(
+            animeId = 1,
+            status = UserAnimeListStatusType.Watching,
+            score = 10
+        )
+
+        assertEquals(UserAnimeListStatusType.Watching, result.status)
+        assertEquals(10, result.score)
+    }
+
+    @Test
+    fun `deleteUserAnimeListItem should complete successfully`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = "",
+                    status = HttpStatusCode.OK
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.anime.deleteUserAnimeListItem(animeId = 1)
+    }
+
+    @Test
+    fun `deleteUserAnimeListItem should throw NotFoundException on 404 error`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ErrorResponses.NOT_FOUND,
+                    status = HttpStatusCode.NotFound,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val exception = assertFailsWith<NotFoundException> {
+            subject.anime.deleteUserAnimeListItem(animeId = 1)
+        }
+
+        assertEquals("not_found", exception.error)
+    }
     // endregion
 
     // region Manga tests
@@ -437,6 +521,158 @@ class KoaniClientTest {
         assertEquals(1, result.data.size)
         assertEquals("One Piece", result.data[0].manga.title)
         assertEquals(1, result.data[0].rank)
+    }
+
+    @Test
+    fun `getUserMangaList should return mapped user manga list`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.USER_MANGA_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.getUserMangaList()
+
+        assertEquals(1, result.data.size)
+        assertEquals("One Piece", result.data[0].manga.title)
+        assertEquals(UserMangaListStatusType.Reading, result.data[0].listStatus.status)
+    }
+
+    @Test
+    fun `getUserMangaList should pass parameters to service`() = runTest {
+        var capturedStatus: String? = null
+        var capturedSort: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedStatus = it.url.parameters["status"]
+                capturedSort = it.url.parameters["sort"]
+                respond(
+                    content = MangaResponses.USER_MANGA_LIST,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.manga.getUserMangaList(
+            status = UserMangaListStatusType.Reading,
+            sortOption = UserMangaListSortOption.Score
+        )
+
+        assertEquals("reading", capturedStatus)
+        assertEquals("list_score", capturedSort)
+    }
+
+    @Test
+    fun `updateUserMangaListStatus should return mapped updated status`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = MangaResponses.UPDATE_USER_MANGA_LIST_STATUS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.manga.updateUserMangaListStatus(
+            mangaId = 1,
+            status = UserMangaListStatusType.Reading,
+            score = 10
+        )
+
+        assertEquals(UserMangaListStatusType.Reading, result.status)
+        assertEquals(10, result.score)
+    }
+
+    @Test
+    fun `deleteUserMangaListItem should complete successfully`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = "",
+                    status = HttpStatusCode.OK
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.manga.deleteUserMangaListItem(mangaId = 1)
+    }
+
+    @Test
+    fun `deleteUserMangaListItem should throw NotFoundException on 404 error`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ErrorResponses.NOT_FOUND,
+                    status = HttpStatusCode.NotFound,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val exception = assertFailsWith<NotFoundException> {
+            subject.manga.deleteUserMangaListItem(mangaId = 1)
+        }
+
+        assertEquals("not_found", exception.error)
+    }
+    // endregion
+
+    // region User tests
+    @Test
+    fun `getUserDetails should return mapped user details`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = UserResponses.USER_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.user.getUserDetails()
+
+        assertEquals(1, result.id)
+        assertEquals("testuser", result.name)
+        assertEquals("male", result.gender)
+    }
+
+    @Test
+    fun `getUserDetails should pass fields and userName to service`() = runTest {
+        var capturedFields: String? = null
+        var capturedUserName: String? = null
+        val container = fakeContainer(
+            requestHandler = {
+                capturedFields = it.url.parameters["fields"]
+                capturedUserName = it.url.encodedPath.split("/").last()
+                respond(
+                    content = UserResponses.USER_DETAILS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        subject.user.getUserDetails(
+            userName = "rribeiro",
+            fields = listOf(UserField.ID, UserField.NAME, UserField.ANIME_STATISTICS)
+        )
+
+        assertEquals("id,name,anime_statistics", capturedFields)
+        assertEquals("rribeiro", capturedUserName)
     }
     // endregion
 }

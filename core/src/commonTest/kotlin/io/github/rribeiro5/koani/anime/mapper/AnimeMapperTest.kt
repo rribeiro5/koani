@@ -3,10 +3,10 @@ package io.github.rribeiro5.koani.anime.mapper
 import io.github.rribeiro5.koani.anime.AnimeStatus
 import io.github.rribeiro5.koani.anime.DayOfWeek
 import io.github.rribeiro5.koani.anime.MediaType
-import io.github.rribeiro5.koani.anime.MyListStatusType
 import io.github.rribeiro5.koani.anime.Rating
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.Source
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import io.github.rribeiro5.koani.anime.dto.AnimeNodeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeRankingEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.AnimeResponse
@@ -18,6 +18,7 @@ import io.github.rribeiro5.koani.anime.dto.StartSeasonResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsResponse
 import io.github.rribeiro5.koani.anime.dto.StatisticsStatusResponse
 import io.github.rribeiro5.koani.anime.dto.StudioResponse
+import io.github.rribeiro5.koani.anime.dto.UserAnimeListEdgeResponse
 import io.github.rribeiro5.koani.anime.dto.UserAnimeListStatusResponse
 import io.github.rribeiro5.koani.core.Nsfw
 import io.github.rribeiro5.koani.core.dto.AlternativeTitlesResponse
@@ -82,7 +83,7 @@ class AnimeMapperTest {
         assertEquals(AnimeStatus.FinishedAiring, domain.status)
         assertEquals(1, domain.genres?.size)
         assertEquals("Sci-Fi", domain.genres?.get(0)?.name)
-        assertEquals(MyListStatusType.Watching, domain.myListStatus?.status)
+        assertEquals(UserAnimeListStatusType.Watching, domain.myListStatus?.status)
         assertEquals(Season.Spring, domain.startSeason?.season)
         assertEquals(DayOfWeek.Friday, domain.broadcast?.dayOfTheWeek)
         assertEquals(Source.Original, domain.source)
@@ -197,7 +198,7 @@ class AnimeMapperTest {
             isRewatching = false,
             updatedAt = "2023-01-01T00:00:00Z"
         )
-        assertEquals(MyListStatusType.Unknown, myListStatusResponse.toDomain().status)
+        assertEquals(UserAnimeListStatusType.Unknown, myListStatusResponse.toDomain().status)
 
         val broadcastResponse = BroadcastResponse("invalid", "00:00")
         assertNull(broadcastResponse.toDomain().dayOfTheWeek)
@@ -213,5 +214,67 @@ class AnimeMapperTest {
         assertEquals(1, domain.anime.id)
         assertEquals(1, domain.rank)
         assertEquals(2, domain.previousRank)
+    }
+
+    @Test
+    fun `UserAnimeListStatusResponse toDomain should map all fields`() {
+        val response = UserAnimeListStatusResponse(
+            status = "watching",
+            score = 10,
+            numEpisodesWatched = 5,
+            isRewatching = false,
+            updatedAt = "2023-01-01T00:00:00Z",
+            startDate = "2023-01-01",
+            finishDate = "2023-01-02",
+            priority = 1,
+            numTimesRewatched = 2,
+            rewatchValue = 3,
+            tags = listOf("tag1", "tag2"),
+            comments = "comments"
+        )
+
+        val domain = response.toDomain()
+
+        assertEquals(UserAnimeListStatusType.Watching, domain.status)
+        assertEquals(response.score, domain.score)
+        assertEquals(response.numEpisodesWatched, domain.numEpisodesWatched)
+        assertEquals(response.isRewatching, domain.isRewatching)
+        assertNotNull(domain.updatedAt)
+        assertNotNull(domain.startDate)
+        assertNotNull(domain.finishDate)
+        assertEquals(response.priority, domain.priority)
+        assertEquals(response.numTimesRewatched, domain.numTimesRewatched)
+        assertEquals(response.rewatchValue, domain.rewatchValue)
+        assertEquals(response.tags, domain.tags)
+        assertEquals(response.comments, domain.comments)
+    }
+
+    @Test
+    fun `UserAnimeListEdgeResponse toDomain should map fields`() {
+        val response = UserAnimeListEdgeResponse(
+            node = AnimeResponse(id = 1, title = "Cowboy Bebop"),
+            listStatus = UserAnimeListStatusResponse(
+                status = "watching",
+                score = 10,
+                numEpisodesWatched = 5,
+                isRewatching = false,
+                updatedAt = "2023-01-01T00:00:00Z"
+            )
+        )
+
+        val domain = response.toDomain()
+
+        assertEquals(1, domain.anime.id)
+        assertEquals(UserAnimeListStatusType.Watching, domain.listStatus.status)
+    }
+
+    @Test
+    fun `UserAnimeListStatusType toApiValue should return correct value`() {
+        assertEquals("watching", UserAnimeListStatusType.Watching.toApiValue())
+        assertEquals("completed", UserAnimeListStatusType.Completed.toApiValue())
+        assertEquals("on_hold", UserAnimeListStatusType.OnHold.toApiValue())
+        assertEquals("dropped", UserAnimeListStatusType.Dropped.toApiValue())
+        assertEquals("plan_to_watch", UserAnimeListStatusType.PlanToWatch.toApiValue())
+        assertEquals("unknown", UserAnimeListStatusType.Unknown.toApiValue())
     }
 }
