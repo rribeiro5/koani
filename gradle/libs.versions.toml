@@ -4,7 +4,7 @@ android-compileSdk = "36"
 android-minSdk = "24"
 
 kotlin = "2.4.10"
-agp = "9.0.0"
+agp = "9.3.1"
 maven-publish = "0.34.0"
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
