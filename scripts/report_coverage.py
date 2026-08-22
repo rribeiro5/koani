@@ -25,10 +25,10 @@ def report_coverage():
             covered = int(counter.get('covered', 0))
             total = missed + covered
             percentage = (covered / total * 100) if total > 0 else 0
-            metrics[c_type] = f"{percentage:.2f}% ({covered}/{total})"
+            metrics[c_type] = f"**{percentage:.2f}%** _({covered}/{total})_"
 
         print("\n### 📊 Code Coverage")
-        print("| Metric | Coverage |")
+        print("| 📏 Metric | 📈 Coverage |")
         print("| --- | --- |")
         for m in ['INSTRUCTION', 'BRANCH', 'LINE', 'METHOD', 'CLASS']:
             if m in metrics:

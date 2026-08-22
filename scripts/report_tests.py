@@ -41,10 +41,10 @@ def report_tests():
         return
 
     print("### 🧪 Test Results")
-    print("| Platform | Total | Passed | Failed | Skipped |")
+    print("| Platform | 📊 Total | ✅ Passed | ❌ Failed | ⚠️ Skipped |")
     print("| --- | --- | --- | --- | --- |")
     for platform, s in sorted(stats.items()):
-        print(f"| {platform} | {s['total']} | ✅ {s['passed']} | ❌ {s['failed']} | ⚠️ {s['skipped']} |")
+        print(f"| {platform} | {s['total']} | {s['passed']} | {s['failed']} | {s['skipped']} |")
 
 if __name__ == "__main__":
     report_tests()
