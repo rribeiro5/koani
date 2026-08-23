@@ -1,11 +1,13 @@
 package io.github.rribeiro5.koani.auth.persistence.ksafe
 
 import eu.anifantakis.lib.ksafe.KSafe
+import io.github.rribeiro5.koani.ExperimentalKoaniApi
 import io.github.rribeiro5.koani.auth.TokenManager
 
 /**
  * [TokenManager] implementation using [KSafe] for secure persistence.
  */
+@ExperimentalKoaniApi
 public class KSafeTokenManager(
     private val kSafe: KSafe
 ) : TokenManager {
