@@ -17,6 +17,7 @@ import io.github.rribeiro5.koani.error.BadRequestException
 import io.github.rribeiro5.koani.error.NotFoundException
 import io.github.rribeiro5.koani.error.UnauthorizedException
 import io.github.rribeiro5.koani.error.dto.ErrorResponses
+import io.github.rribeiro5.koani.forum.dto.ForumResponses
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
 import io.github.rribeiro5.koani.manga.UserMangaListSortOption
@@ -673,6 +674,68 @@ class KoaniClientTest {
 
         assertEquals("id,name,anime_statistics", capturedFields)
         assertEquals("rribeiro", capturedUserName)
+    }
+    // endregion
+
+    // region Forum tests
+    @Test
+    fun `getForumBoards should return mapped forum boards`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ForumResponses.FORUM_BOARDS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.forum.getForumBoards()
+
+        assertEquals(1, result.size)
+        assertEquals("MyAnimeList", result[0].title)
+    }
+
+    @Test
+    fun `getForumTopics should return mapped forum topics`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ForumResponses.FORUM_TOPICS,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.forum.getForumTopics(query = "MAL")
+
+        assertEquals(1, result.data.size)
+        assertEquals("Welcome to MAL", result.data[0].title)
+        assertEquals(1, result.data[0].createdBy.id)
+    }
+
+    @Test
+    fun `getForumTopicDetail should return mapped forum topic detail`() = runTest {
+        val container = fakeContainer(
+            requestHandler = {
+                respond(
+                    content = ForumResponses.FORUM_TOPIC_DETAIL,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+        val subject = createSubject(container)
+
+        val result = subject.forum.getForumTopicDetail(1)
+
+        assertEquals("Welcome to MAL", result.title)
+        assertEquals(1, result.posts.data.size)
+        assertEquals("Welcome to our community!", result.posts.data[0].body)
+        assertEquals("Do you like MAL?", result.poll?.question)
     }
     // endregion
 }
