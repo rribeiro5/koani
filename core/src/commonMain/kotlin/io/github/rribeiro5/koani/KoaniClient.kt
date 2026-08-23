@@ -16,6 +16,10 @@ import io.github.rribeiro5.koani.auth.mapper.toSession
 import io.github.rribeiro5.koani.core.PaginatedList
 import io.github.rribeiro5.koani.core.mapper.toPaginatedList
 import io.github.rribeiro5.koani.di.KoaniContainer
+import io.github.rribeiro5.koani.forum.ForumCategory
+import io.github.rribeiro5.koani.forum.ForumTopic
+import io.github.rribeiro5.koani.forum.ForumTopicDetail
+import io.github.rribeiro5.koani.forum.mapper.toDomain
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
 import io.github.rribeiro5.koani.manga.UserMangaListItem
@@ -39,6 +43,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
     public val auth: Auth by lazy { Auth(container) }
     public val anime: Anime by lazy { Anime(container) }
     public val manga: Manga by lazy { Manga(container) }
+    public val forum: Forum by lazy { Forum(container) }
     public val user: User by lazy { User(container) }
 
     init {
@@ -316,6 +321,47 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         public suspend fun deleteUserMangaListItem(mangaId: Int) {
             container.logger.d { "Deleting user manga list item for id: $mangaId" }
             container.mangaService.deleteUserMangaListItem(mangaId = mangaId)
+        }
+    }
+
+    public class Forum internal constructor(private val container: KoaniContainer) {
+        public suspend fun getForumBoards(): List<ForumCategory> {
+            container.logger.d { "Getting forum boards" }
+            return container.forumService.getForumBoards().categories.map { it.toDomain() }
+        }
+
+        public suspend fun getForumTopics(
+            boardId: Int? = null,
+            subboardId: Int? = null,
+            query: String? = null,
+            topicUserName: String? = null,
+            userName: String? = null,
+            limit: Int? = null,
+            offset: Int? = null,
+        ): PaginatedList<ForumTopic> {
+            container.logger.d { "Getting forum topics" }
+            return container.forumService.getForumTopics(
+                boardId = boardId,
+                subboardId = subboardId,
+                query = query,
+                topicUserName = topicUserName,
+                userName = userName,
+                limit = limit,
+                offset = offset,
+            ).toPaginatedList { it.toDomain() }
+        }
+
+        public suspend fun getForumTopicDetail(
+            topicId: Int,
+            limit: Int? = null,
+            offset: Int? = null,
+        ): ForumTopicDetail {
+            container.logger.d { "Getting forum topic details for id: $topicId" }
+            return container.forumService.getForumTopicDetail(
+                topicId = topicId,
+                limit = limit,
+                offset = offset,
+            ).toDomain()
         }
     }
 
