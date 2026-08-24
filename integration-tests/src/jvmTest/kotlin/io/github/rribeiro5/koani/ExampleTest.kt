@@ -6,8 +6,13 @@ import kotlin.test.assertNotNull
 class ExampleTest : BaseIntegrationTest() {
 
     @Test
-    fun `smoke test - client can be instantiated`() {
-        val client = createClient()
-        assertNotNull(client)
+    fun `smoke test - client can be instantiated`() = runIntegrationTest { client ->
+        // Demonstrating the rate-limited request pattern using the provided client
+        val result = performRequest {
+            // In a real integration test, this would be: client.anime.getAnimeDetails(...)
+            client
+        }
+        
+        assertNotNull(result)
     }
 }
