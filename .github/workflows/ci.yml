@@ -6,6 +6,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# Cancel in-progress runs when a new workflow is triggered for the same PR or branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Job to detect changes in specific paths to conditionally run integration tests
   detect-changes:
