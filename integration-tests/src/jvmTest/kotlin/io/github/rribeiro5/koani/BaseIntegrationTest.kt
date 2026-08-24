@@ -29,12 +29,12 @@ abstract class BaseIntegrationTest {
 
     /**
      * Executes a block (API request) while holding a global lock to respect rate limits.
-     * The lock is held during the request and for a mandatory 2-second cooldown period.
+     * The lock is held during the request and for a mandatory 1-second cooldown period.
      */
     protected suspend fun <T> performRequest(block: suspend () -> T): T {
         return apiMutex.withLock {
             val result = block()
-            delay(2.seconds)
+            delay(1.seconds)
             result
         }
     }
