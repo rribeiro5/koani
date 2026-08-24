@@ -9,6 +9,7 @@ on:
 jobs:
   # Job to detect changes in specific paths to conditionally run integration tests
   detect-changes:
+    name: Detect changes
     runs-on: ubuntu-latest
     outputs:
       integration: ${{ steps.filter.outputs.integration }}
