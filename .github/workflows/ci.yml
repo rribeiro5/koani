@@ -7,6 +7,20 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  # Job to detect changes in specific paths to conditionally run integration tests
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      integration: ${{ steps.filter.outputs.integration }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            integration:
+              - 'integration-tests/**'
+
   build:
     name: Build and Test
     runs-on: macos-latest
@@ -56,10 +70,18 @@ jobs:
 
   integration-tests:
     name: Integration Tests
-    needs: build
+    needs: [build, detect-changes]
     runs-on: ubuntu-latest
-    # Run on pushes to main (merges) OR pull requests originating from release/* branches
-    if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/'))
+    # Run on:
+    # 1. Pushes to main (merges)
+    # 2. Pull requests originating from release/* branches
+    # 3. Any pull request that modifies files in the integration-tests/ directory
+    if: |
+      github.ref == 'refs/heads/main' || 
+      (github.event_name == 'pull_request' && (
+        startsWith(github.head_ref, 'release/') || 
+        needs.detect-changes.outputs.integration == 'true'
+      ))
     
     steps:
       - name: Checkout code
