@@ -72,13 +72,13 @@ public enum class UserMangaListStatusType {
 
 public data class Author(
     val node: AuthorNode,
-    val role: String,
+    val role: String? = null,
 )
 
 public data class AuthorNode(
     val id: Int,
-    val firstName: String,
-    val lastName: String,
+    val firstName: String? = null,
+    val lastName: String? = null,
 )
 
 public data class RelatedAnime(
@@ -106,7 +106,7 @@ public data class Recommendation(
 
 public data class Serialization(
     val node: SerializationNode,
-    val role: String,
+    val role: String? = null,
 )
 
 public data class SerializationNode(
