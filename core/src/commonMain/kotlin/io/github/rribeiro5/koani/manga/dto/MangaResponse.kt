@@ -102,7 +102,7 @@ internal data class AuthorResponse(
     @SerialName("node")
     val node: AuthorNodeResponse,
     @SerialName("role")
-    val role: String,
+    val role: String? = null,
 )
 
 @Serializable
@@ -110,9 +110,9 @@ internal data class AuthorNodeResponse(
     @SerialName("id")
     val id: Int,
     @SerialName("first_name")
-    val firstName: String,
+    val firstName: String? = null,
     @SerialName("last_name")
-    val lastName: String,
+    val lastName: String? = null,
 )
 
 @Serializable
@@ -158,7 +158,7 @@ internal data class SerializationResponse(
     @SerialName("node")
     val node: SerializationNodeResponse,
     @SerialName("role")
-    val role: String,
+    val role: String? = null,
 )
 
 @Serializable
