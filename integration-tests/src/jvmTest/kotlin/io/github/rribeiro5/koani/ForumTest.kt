@@ -43,14 +43,16 @@ class ForumTest : BaseIntegrationTest() {
     @Test
     fun `get forum topics with limit 3 and then get next page`() = runIntegrationTest { client ->
         val limit = 3
+        val query = "anime"
         val firstPage = performRequest {
-            client.forum.getForumTopics(limit = limit)
+            client.forum.getForumTopics(query = query, limit = limit)
         }
         assertEquals(limit, firstPage.data.size)
         assertNotNull(firstPage.paging.nextOffset)
 
         val secondPage = performRequest {
             client.forum.getForumTopics(
+                query = query,
                 limit = limit,
                 offset = firstPage.paging.nextOffset?.toInt()
             )
