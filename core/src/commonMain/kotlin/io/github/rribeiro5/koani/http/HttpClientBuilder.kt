@@ -83,6 +83,8 @@ internal fun buildHttpClient(
     }
     install(HttpTimeout) {
         requestTimeoutMillis = timeoutMillis
+        connectTimeoutMillis = timeoutMillis
+        socketTimeoutMillis = timeoutMillis
     }
 
     if (logLevel != LogLevel.NONE) {

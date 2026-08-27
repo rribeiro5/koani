@@ -93,7 +93,7 @@ internal data class ForumPollResponse(
     @SerialName("question")
     val question: String,
     @SerialName("close")
-    val isClosed: Boolean,
+    val isClosed: Boolean? = null,
     @SerialName("options")
     val options: List<ForumPollOptionResponse>,
 )

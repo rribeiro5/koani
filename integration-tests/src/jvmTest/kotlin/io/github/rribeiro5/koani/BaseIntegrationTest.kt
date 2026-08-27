@@ -41,6 +41,7 @@ abstract class BaseIntegrationTest {
 
     protected fun createClient(): KoaniClient {
         return KoaniClient.Builder(malClientId)
+            .timeoutMillis(30_000) // Increase timeout for integration tests
             .build()
     }
 }
