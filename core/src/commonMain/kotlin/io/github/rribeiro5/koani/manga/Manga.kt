@@ -47,7 +47,7 @@ public data class RankedManga(
 
 public data class UserMangaListItem(
     val manga: Manga,
-    val listStatus: UserMangaListStatus,
+    val listStatus: UserMangaListStatus? = null,
 )
 
 public data class UserMangaListStatus(

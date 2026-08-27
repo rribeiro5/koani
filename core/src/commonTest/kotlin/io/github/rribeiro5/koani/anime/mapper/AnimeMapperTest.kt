@@ -265,7 +265,7 @@ class AnimeMapperTest {
         val domain = response.toDomain()
 
         assertEquals(1, domain.anime.id)
-        assertEquals(UserAnimeListStatusType.Watching, domain.listStatus.status)
+        assertEquals(UserAnimeListStatusType.Watching, domain.listStatus!!.status)
     }
 
     @Test

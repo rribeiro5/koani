@@ -357,7 +357,7 @@ class KoaniClientTest {
 
         assertEquals(1, result.data.size)
         assertEquals("Cowboy Bebop", result.data[0].anime.title)
-        assertEquals(UserAnimeListStatusType.Watching, result.data[0].listStatus.status)
+        assertEquals(UserAnimeListStatusType.Watching, result.data[0].listStatus!!.status)
     }
 
     @Test
@@ -541,7 +541,7 @@ class KoaniClientTest {
 
         assertEquals(1, result.data.size)
         assertEquals("One Piece", result.data[0].manga.title)
-        assertEquals(UserMangaListStatusType.Reading, result.data[0].listStatus.status)
+        assertEquals(UserMangaListStatusType.Reading, result.data[0].listStatus!!.status)
     }
 
     @Test

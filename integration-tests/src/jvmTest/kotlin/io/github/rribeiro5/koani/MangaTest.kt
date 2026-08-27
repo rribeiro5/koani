@@ -2,6 +2,8 @@ package io.github.rribeiro5.koani
 
 import io.github.rribeiro5.koani.manga.MangaField
 import io.github.rribeiro5.koani.manga.MangaRankingType
+import io.github.rribeiro5.koani.manga.UserMangaListSortOption
+import io.github.rribeiro5.koani.manga.UserMangaListStatusType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -78,6 +80,34 @@ class MangaTest : BaseIntegrationTest() {
     fun `get manga ranking for one of the ranking types`() = runIntegrationTest { client ->
         val response = performRequest {
             client.manga.getMangaRanking(MangaRankingType.All)
+        }
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+    }
+
+    @Test
+    fun `get user manga list`() = runIntegrationTest { client ->
+        val response = performRequest {
+            client.manga.getUserMangaList(userName = "rafa_ribeiro1")
+        }
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+    }
+
+    @Test
+    fun `get user manga list for a status type`() = runIntegrationTest { client ->
+        val response = performRequest {
+            client.manga.getUserMangaList(userName = "rafa_ribeiro1", status = UserMangaListStatusType.Completed)
+        }
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+        // When unauthenticated (Client ID only), listStatus is omitted by the API
+    }
+
+    @Test
+    fun `get user manga list with a sort option`() = runIntegrationTest { client ->
+        val response = performRequest {
+            client.manga.getUserMangaList(userName = "rafa_ribeiro1", sortOption = UserMangaListSortOption.Title)
         }
         assertNotNull(response)
         assertTrue(response.data.isNotEmpty())
