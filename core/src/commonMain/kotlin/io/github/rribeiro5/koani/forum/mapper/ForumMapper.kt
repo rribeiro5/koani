@@ -69,7 +69,7 @@ internal fun ForumTopicDetailResponse.toDomain(): ForumTopicDetail = ForumTopicD
 private fun ForumPollResponse.toDomain(): ForumPoll = ForumPoll(
     id = id,
     question = question,
-    isClosed = isClosed,
+    isClosed = isClosed ?: false,
     options = options.map { it.toDomain() }
 )
 

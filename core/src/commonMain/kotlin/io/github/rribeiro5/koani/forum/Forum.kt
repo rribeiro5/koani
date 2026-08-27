@@ -46,7 +46,7 @@ public data class ForumTopicDetail(
 public data class ForumPoll(
     val id: Int,
     val question: String,
-    val isClosed: Boolean,
+    val isClosed: Boolean = false,
     val options: List<ForumPollOption>,
 )
 
