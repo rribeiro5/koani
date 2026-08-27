@@ -51,7 +51,7 @@ public data class RankedAnime(
 
 public data class UserAnimeListItem(
     val anime: Anime,
-    val listStatus: UserAnimeListStatus,
+    val listStatus: UserAnimeListStatus? = null,
 )
 
 public data class UserAnimeListStatus(

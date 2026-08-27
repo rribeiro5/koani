@@ -140,7 +140,7 @@ internal fun MangaRankingEdgeResponse.toDomain(): RankedManga = RankedManga(
 
 internal fun UserMangaListEdgeResponse.toDomain(): UserMangaListItem = UserMangaListItem(
     manga = node.toDomain(),
-    listStatus = listStatus.toDomain()
+    listStatus = listStatus?.toDomain()
 )
 
 private fun String.toMediaType(): MediaType? = when (this) {

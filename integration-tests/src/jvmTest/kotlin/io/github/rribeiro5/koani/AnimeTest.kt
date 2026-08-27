@@ -4,6 +4,8 @@ import io.github.rribeiro5.koani.anime.AnimeField
 import io.github.rribeiro5.koani.anime.AnimeRankingType
 import io.github.rribeiro5.koani.anime.Season
 import io.github.rribeiro5.koani.anime.SeasonalAnimeSort
+import io.github.rribeiro5.koani.anime.UserAnimeListSortOption
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -98,6 +100,34 @@ class AnimeTest : BaseIntegrationTest() {
     fun `get seasonal animes for Winter 2021 with one sort option`() = runIntegrationTest { client ->
         val response = performRequest {
             client.anime.getSeasonalAnimes(2021, Season.Winter, sort = SeasonalAnimeSort.AnimeScore)
+        }
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+    }
+
+    @Test
+    fun `get user anime list`() = runIntegrationTest { client ->
+        val response = performRequest {
+            client.anime.getUserAnimeList(userName = "rafa_ribeiro1")
+        }
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+    }
+
+    @Test
+    fun `get user anime list for a status type`() = runIntegrationTest { client ->
+        val response = performRequest {
+            client.anime.getUserAnimeList(userName = "rafa_ribeiro1", status = UserAnimeListStatusType.Completed)
+        }
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+        // When unauthenticated (Client ID only), listStatus is omitted by the API
+    }
+
+    @Test
+    fun `get user anime list with a sort option`() = runIntegrationTest { client ->
+        val response = performRequest {
+            client.anime.getUserAnimeList(userName = "rafa_ribeiro1", sortOption = UserAnimeListSortOption.Title)
         }
         assertNotNull(response)
         assertTrue(response.data.isNotEmpty())

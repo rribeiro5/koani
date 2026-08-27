@@ -23,5 +23,5 @@ internal data class UserMangaListEdgeResponse(
     @SerialName("node")
     val node: MangaResponse,
     @SerialName("list_status")
-    val listStatus: UserMangaListStatusResponse
+    val listStatus: UserMangaListStatusResponse? = null
 )

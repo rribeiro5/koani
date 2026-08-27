@@ -150,7 +150,7 @@ internal fun AnimeRankingEdgeResponse.toDomain(): RankedAnime = RankedAnime(
 
 internal fun UserAnimeListEdgeResponse.toDomain(): UserAnimeListItem = UserAnimeListItem(
     anime = node.toDomain(),
-    listStatus = listStatus.toDomain()
+    listStatus = listStatus?.toDomain()
 )
 
 internal fun MangaNodeResponse.toDomain(): MangaNode = MangaNode(
