@@ -83,7 +83,7 @@ class KtorMangaServiceTest {
 
         assertEquals(1, result.data.size)
         assertEquals(1, result.data[0].node.id)
-        assertEquals("reading", result.data[0].listStatus.status)
+        assertEquals("reading", result.data[0].listStatus!!.status)
     }
 
     @Test

@@ -117,7 +117,7 @@ class KtorAnimeServiceTest {
 
         assertEquals(1, result.data.size)
         assertEquals(1, result.data[0].node.id)
-        assertEquals("watching", result.data[0].listStatus.status)
+        assertEquals("watching", result.data[0].listStatus!!.status)
     }
 
     @Test
