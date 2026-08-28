@@ -42,6 +42,7 @@ val includeSamples = providers.gradleProperty("includeSamples").orNull == "true"
     || System.getProperty("idea.active") == "true"
 
 if (includeSamples) {
+    include(":samples")
     include(":samples:cli")
 }
 

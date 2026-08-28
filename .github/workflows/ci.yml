@@ -74,6 +74,26 @@ jobs:
           name: kover-report
           path: build/reports/kover/html
 
+  build-samples:
+    name: Build Samples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Samples
+        run: ./gradlew :samples:assemble -PincludeSamples=true
+
   integration-tests:
     name: Integration Tests
     needs: [build, detect-changes]
