@@ -16,6 +16,11 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    versionCatalogs {
+        create("samples") {
+            from(files("gradle/samples.versions.toml"))
+        }
+    }
     repositories {
         google {
             content { 
@@ -28,7 +33,16 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 include(":core")
 include(":auth-persistence-ksafe")
 include(":integration-tests")
+
+val includeSamples = providers.gradleProperty("includeSamples").orNull == "true" 
+    || System.getProperty("idea.active") == "true"
+
+if (includeSamples) {
+    include(":samples")
+    include(":samples:cli")
+}
 
