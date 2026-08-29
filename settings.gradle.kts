@@ -44,5 +44,6 @@ val includeSamples = providers.gradleProperty("includeSamples").orNull == "true"
 if (includeSamples) {
     include(":samples")
     include(":samples:cli")
+    include(":samples:compose")
 }
 
