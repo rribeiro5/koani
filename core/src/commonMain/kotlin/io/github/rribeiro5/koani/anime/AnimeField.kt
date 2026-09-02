@@ -1,5 +1,8 @@
 package io.github.rribeiro5.koani.anime
 
+/**
+ * Represents the optional fields that can be requested when retrieving anime information.
+ */
 public enum class AnimeField(internal val fieldName: String) {
     ID("id"),
     TITLE("title"),

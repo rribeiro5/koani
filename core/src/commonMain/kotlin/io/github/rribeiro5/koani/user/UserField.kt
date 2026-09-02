@@ -1,5 +1,8 @@
 package io.github.rribeiro5.koani.user
 
+/**
+ * Represents the optional fields that can be requested when retrieving user information.
+ */
 public enum class UserField(internal val fieldName: String) {
     ID("id"),
     NAME("name"),

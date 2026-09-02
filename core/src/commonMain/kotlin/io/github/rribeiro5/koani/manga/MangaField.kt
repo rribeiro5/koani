@@ -1,5 +1,8 @@
 package io.github.rribeiro5.koani.manga
 
+/**
+ * Represents the optional fields that can be requested when retrieving manga information.
+ */
 public enum class MangaField(internal val fieldName: String) {
     ID("id"),
     TITLE("title"),

@@ -3,7 +3,10 @@ package io.github.rribeiro5.koani.auth
 import kotlin.concurrent.Volatile
 
 /**
- * An in-memory implementation of [TokenManager] that is thread-safe.
+ * A thread-safe, in-memory implementation of [TokenManager].
+ *
+ * This implementation stores tokens in memory only. Tokens will be lost
+ * when the application process is terminated.
  */
 public class MemoryTokenManager : TokenManager {
     private data class TokenState(val accessToken: String?, val refreshToken: String?)
