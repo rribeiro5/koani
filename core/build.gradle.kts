@@ -8,6 +8,12 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
+    alias(libs.plugins.dokka)
+}
+
+dokka {
+    moduleName.set("koani-core")
+    moduleVersion.set(libs.versions.koani.version.get())
 }
 
 detekt {

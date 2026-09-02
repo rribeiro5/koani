@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
+    alias(libs.plugins.dokka)
+}
+
+dokka {
+    moduleName.set("koani-auth-persistence-ksafe")
+    moduleVersion.set(libs.versions.koani.version.get())
 }
 
 detekt {
