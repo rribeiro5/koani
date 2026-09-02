@@ -249,24 +249,47 @@ public data class AnimeNode(
  * The media type of an anime.
  */
 public enum class MediaType {
-    Unknown, Tv, Ova, Movie, Special, Ona, Music
+    /** Unknown media type. */
+    Unknown,
+    /** TV series. */
+    Tv,
+    /** Original Video Animation. */
+    Ova,
+    /** Movie. */
+    Movie,
+    /** Special episodes. */
+    Special,
+    /** Original Net Animation. */
+    Ona,
+    /** Music video. */
+    Music
 }
 
 /**
  * The airing status of an anime.
  */
 public enum class AnimeStatus {
-    FinishedAiring, CurrentlyAiring, NotYetAired
+    /** The anime has finished airing. */
+    FinishedAiring,
+    /** The anime is currently airing. */
+    CurrentlyAiring,
+    /** The anime has not yet aired. */
+    NotYetAired
 }
 
 /**
  * The season when an anime started airing.
  */
 public enum class Season(internal val value: String) {
+    /** Unknown season. */
     Unknown("unknown"),
+    /** Winter season (January, February, March). */
     Winter("winter"),
+    /** Spring season (April, May, June). */
     Spring("spring"),
+    /** Summer season (July, August, September). */
     Summer("summer"),
+    /** Fall season (October, November, December). */
     Fall("fall")
 }
 
@@ -274,29 +297,96 @@ public enum class Season(internal val value: String) {
  * The age rating of an anime.
  */
 public enum class Rating {
-    G, Pg, Pg13, R, RPlus, Rx
+    /** G - All Ages. */
+    G,
+    /** PG - Children. */
+    Pg,
+    /** PG-13 - Teens 13 or older. */
+    Pg13,
+    /** R - 17+ (violence & profanity). */
+    R,
+    /** R+ - Mild Nudity. */
+    RPlus,
+    /** Rx - Hentai. */
+    Rx
 }
 
 /**
  * The status of an anime in a user's list.
  */
 public enum class UserAnimeListStatusType {
-    Unknown, Watching, Completed, OnHold, Dropped, PlanToWatch
+    /** Unknown status. */
+    Unknown,
+    /** The user is currently watching the anime. */
+    Watching,
+    /** The user has completed the anime. */
+    Completed,
+    /** The user has put the anime on hold. */
+    OnHold,
+    /** The user has dropped the anime. */
+    Dropped,
+    /** The user plans to watch the anime. */
+    PlanToWatch
 }
 
 /**
  * The source material of an anime.
  */
 public enum class Source {
-    Original, Manga, FourKomaManga, WebManga, DigitalManga, Novel, LightNovel, VisualNovel,
-    Game, VideoGame, CardGame, Book, PictureBook, Radio, Music, Other
+    /** Original work. */
+    Original,
+    /** Manga source. */
+    Manga,
+    /** 4-koma manga source. */
+    FourKomaManga,
+    /** Web manga source. */
+    WebManga,
+    /** Digital manga source. */
+    DigitalManga,
+    /** Novel source. */
+    Novel,
+    /** Light novel source. */
+    LightNovel,
+    /** Visual novel source. */
+    VisualNovel,
+    /** Game source. */
+    Game,
+    /** Video game source. */
+    VideoGame,
+    /** Card game source. */
+    CardGame,
+    /** Book source. */
+    Book,
+    /** Picture book source. */
+    PictureBook,
+    /** Radio source. */
+    Radio,
+    /** Music source. */
+    Music,
+    /** Other sources. */
+    Other
 }
 
 /**
  * The day of the week.
  */
 public enum class DayOfWeek {
-    Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Other
+    /** Monday. */
+    Monday,
+    /** Tuesday. */
+    Tuesday,
+    /** Wednesday. */
+    Wednesday,
+    /** Thursday. */
+    Thursday,
+    /** Friday. */
+    Friday,
+    /** Saturday. */
+    Saturday,
+    /** Sunday. */
+    Sunday,
+    /** Other days. */
+    Other
 }
 
 /**
@@ -345,7 +435,9 @@ public enum class AnimeRankingType(internal val value: String) {
  * Sorting options for seasonal anime.
  */
 public enum class SeasonalAnimeSort(internal val value: String) {
+    /** Sort by anime score. */
     AnimeScore("anime_score"),
+    /** Sort by number of users who have the anime in their list. */
     AnimeNumListUsers("anime_num_list_users")
 }
 
@@ -353,8 +445,12 @@ public enum class SeasonalAnimeSort(internal val value: String) {
  * Sorting options for a user's anime list.
  */
 public enum class UserAnimeListSortOption(internal val value: String) {
+    /** Sort by the score in the user's list. */
     Score("list_score"),
+    /** Sort by the last update time in the user's list. */
     UpdatedAt("list_updated_at"),
+    /** Sort by anime title. */
     Title("anime_title"),
+    /** Sort by anime start date. */
     StartDate("anime_start_date"),
 }

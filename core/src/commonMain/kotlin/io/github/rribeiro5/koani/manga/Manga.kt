@@ -132,7 +132,18 @@ public data class UserMangaListStatus(
  * The status of a manga in a user's list.
  */
 public enum class UserMangaListStatusType {
-    Unknown, Reading, Completed, OnHold, Dropped, PlanToRead
+    /** Unknown status. */
+    Unknown,
+    /** The user is currently reading the manga. */
+    Reading,
+    /** The user has completed the manga. */
+    Completed,
+    /** The user has put the manga on hold. */
+    OnHold,
+    /** The user has dropped the manga. */
+    Dropped,
+    /** The user plans to read the manga. */
+    PlanToRead
 }
 
 /**
@@ -235,14 +246,38 @@ public data class SerializationNode(
  * The media type of a manga.
  */
 public enum class MediaType {
-    Unknown, Manga, Novel, OneShot, Doujinshi, Manhwa, Manhua, Oel
+    /** Unknown media type. */
+    Unknown,
+    /** Manga. */
+    Manga,
+    /** Novel. */
+    Novel,
+    /** One-shot manga. */
+    OneShot,
+    /** Doujinshi. */
+    Doujinshi,
+    /** Manhwa. */
+    Manhwa,
+    /** Manhua. */
+    Manhua,
+    /** Original English-language manga. */
+    Oel
 }
 
 /**
  * The publishing status of a manga.
  */
 public enum class MangaStatus {
-    Finished, CurrentlyPublishing, OnHiatus, Discontinued, NotYetPublished
+    /** The manga has finished publishing. */
+    Finished,
+    /** The manga is currently being published. */
+    CurrentlyPublishing,
+    /** The manga is on hiatus. */
+    OnHiatus,
+    /** The manga has been discontinued. */
+    Discontinued,
+    /** The manga has not yet been published. */
+    NotYetPublished
 }
 
 /**
@@ -291,8 +326,12 @@ public enum class MangaRankingType(internal val value: String) {
  * Sorting options for a user's manga list.
  */
 public enum class UserMangaListSortOption(internal val value: String) {
+    /** Sort by the score in the user's list. */
     Score("list_score"),
+    /** Sort by the last update time in the user's list. */
     UpdatedAt("list_updated_at"),
+    /** Sort by manga title. */
     Title("manga_title"),
+    /** Sort by manga start date. */
     StartDate("manga_start_date"),
 }
