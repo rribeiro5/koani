@@ -1,5 +1,7 @@
 [versions]
 
+koani-version = "2.0.0"
+
 android-compileSdk = "36"
 android-minSdk = "24"
 
@@ -14,6 +16,7 @@ detekt = "2.0.0-alpha.6"
 kover = "0.9.9"
 kermit = "2.1.0"
 ksafe = "3.1.0"
+dokka = "2.2.0"
 
 [libraries]
 
@@ -48,3 +51,4 @@ maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publ
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

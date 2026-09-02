@@ -1,32 +1,90 @@
 package io.github.rribeiro5.koani.manga
 
+/**
+ * Represents the optional fields that can be requested when retrieving manga information.
+ */
 public enum class MangaField(internal val fieldName: String) {
+    /** Represents the id field in the API response. */
     ID("id"),
+
+    /** Represents the title field in the API response. */
     TITLE("title"),
+
+    /** Represents the main_picture field in the API response. */
     MAIN_PICTURE("main_picture"),
+
+    /** Represents the alternative_titles field in the API response. */
     ALTERNATIVE_TITLES("alternative_titles"),
+
+    /** Represents the start_date field in the API response. */
     START_DATE("start_date"),
+
+    /** Represents the end_date field in the API response. */
     END_DATE("end_date"),
+
+    /** Represents the synopsis field in the API response. */
     SYNOPSIS("synopsis"),
+
+    /** Represents the mean field in the API response. */
     MEAN("mean"),
+
+    /** Represents the rank field in the API response. */
     RANK("rank"),
+
+    /** Represents the popularity field in the API response. */
     POPULARITY("popularity"),
+
+    /** Represents the num_list_users field in the API response. */
     NUM_LIST_USERS("num_list_users"),
+
+    /** Represents the num_scoring_users field in the API response. */
     NUM_SCORING_USERS("num_scoring_users"),
+
+    /** Represents the nsfw field in the API response. */
     NSFW("nsfw"),
+
+    /** Represents the created_at field in the API response. */
     CREATED_AT("created_at"),
+
+    /** Represents the updated_at field in the API response. */
     UPDATED_AT("updated_at"),
+
+    /** Represents the media_type field in the API response. */
     MEDIA_TYPE("media_type"),
+
+    /** Represents the status field in the API response. */
     STATUS("status"),
+
+    /** Represents the genres field in the API response. */
     GENRES("genres"),
+
+    /** Represents the my_list_status field in the API response. */
     MY_LIST_STATUS("my_list_status"),
+
+    /** Represents the num_volumes field in the API response. */
     NUM_VOLUMES("num_volumes"),
+
+    /** Represents the num_chapters field in the API response. */
     NUM_CHAPTERS("num_chapters"),
+
+    /** Represents the authors field in the API response. */
     AUTHORS("authors"),
+
+    /** Represents the pictures field in the API response. */
     PICTURES("pictures"),
+
+    /** Represents the background field in the API response. */
     BACKGROUND("background"),
+
+    /** Represents the related_anime field in the API response. */
     RELATED_ANIME("related_anime"),
+
+    /** Represents the related_manga field in the API response. */
     RELATED_MANGA("related_manga"),
+
+    /** Represents the recommendations field in the API response. */
     RECOMMENDATIONS("recommendations"),
+
+    /** Represents the serialization field in the API response. */
     SERIALIZATION("serialization")
 }
