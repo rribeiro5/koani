@@ -55,7 +55,7 @@ kotlin {
         }
 
         jvmMain.dependencies {
-            implementation(samples.compose.desktop)
+            implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
         }
