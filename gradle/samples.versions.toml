@@ -6,6 +6,7 @@ koin = "4.2.2"
 coil = "3.6.0"
 navigation3 = "1.2.0-alpha02"
 androidx-lifecycle = "2.11.0"
+activity = "1.10.1"
 
 [libraries]
 clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
@@ -27,6 +28,7 @@ navigation3-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-navig
 # Lifecycle
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 
 [plugins]
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

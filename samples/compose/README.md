@@ -22,13 +22,13 @@ The application requires a MyAnimeList Client ID. You can provide it via a Gradl
 Run the following command from the project root:
 
 ```bash
-./gradlew :samples:compose:run -PincludeSamples=true -PMAL_CLIENT_ID=YOUR_ID
+./gradlew :samples:compose:shared:run -PincludeSamples=true -PMAL_CLIENT_ID=YOUR_ID
 ```
 
 ### Android
 
-You can run the app directly from Android Studio (ensure the `:samples:compose` module is selected) or use the command line:
+You can run the app directly from Android Studio (ensure the `:samples:compose:android-app` module is selected) or use the command line:
 
 ```bash
-./gradlew :samples:compose:installDebug -PincludeSamples=true -PMAL_CLIENT_ID=YOUR_ID
+./gradlew :samples:compose:android-app:installDebug -PincludeSamples=true -PMAL_CLIENT_ID=YOUR_ID
 ```
