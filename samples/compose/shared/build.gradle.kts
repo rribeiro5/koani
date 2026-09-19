@@ -2,14 +2,17 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    id("com.android.library")
+    alias(libs.plugins.android.kmp.library)
     alias(samples.plugins.jetbrains.compose)
     alias(samples.plugins.kotlin.compose.compiler)
     alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
-    androidTarget {
+    android {
+        namespace = "io.github.rribeiro5.koani.sample.compose.shared"
+        compileSdk = 37
+        minSdk = 26
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
 
@@ -56,24 +59,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
         }
-    }
-}
-
-android {
-    namespace = "io.github.rribeiro5.koani.sample.compose.shared"
-    compileSdk = 37
-
-    defaultConfig {
-        minSdk = 26
-        val malClientId = System.getenv("MAL_CLIENT_ID") ?: project.findProperty("MAL_CLIENT_ID")?.toString() ?: ""
-        buildConfigField("String", "MAL_CLIENT_ID", "\"$malClientId\"")
-    }
-    buildFeatures {
-        buildConfig = true
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

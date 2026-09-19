@@ -1,7 +1,6 @@
 package io.github.rribeiro5.koani.sample.compose.di
 
 import io.github.rribeiro5.koani.KoaniClient
-import io.github.rribeiro5.koani.sample.compose.clientId
 import io.github.rribeiro5.koani.sample.compose.ranking.AnimeRankingViewModel
 import io.github.rribeiro5.koani.sample.compose.ranking.MangaRankingViewModel
 import io.github.rribeiro5.koani.sample.compose.detail.anime.AnimeDetailViewModel
@@ -13,7 +12,7 @@ import org.koin.dsl.includes
 import org.koin.dsl.module
 
 val appModule = module {
-    single { KoaniClient.Builder(clientId).build() }
+    single { KoaniClient.Builder(get<String>()).build() }
     
     viewModel { AnimeRankingViewModel(get()) }
     viewModel { MangaRankingViewModel(get()) }
@@ -21,8 +20,11 @@ val appModule = module {
     viewModel { (id: Int) -> MangaDetailViewModel(get(), id) }
 }
 
-fun initKoin(appDeclaration: KoinAppDeclaration? = null) =
+fun initKoin(
+    clientId: String,
+    appDeclaration: KoinAppDeclaration? = null
+) =
     startKoin {
         includes(appDeclaration)
-        modules(appModule)
+        modules(module { single { clientId } }, appModule)
     }

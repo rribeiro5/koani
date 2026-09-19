@@ -5,7 +5,7 @@ import androidx.compose.ui.window.application
 import io.github.rribeiro5.koani.sample.compose.di.initKoin
 
 fun main() = application {
-    initKoin()
+    initKoin(clientId)
 
     Window(
         onCloseRequest = ::exitApplication,

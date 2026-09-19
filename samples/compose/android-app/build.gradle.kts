@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     alias(samples.plugins.kotlin.compose.compiler)
 }
 
@@ -15,8 +14,14 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val malClientId = System.getenv("MAL_CLIENT_ID") ?: project.findProperty("MAL_CLIENT_ID")?.toString() ?: ""
-        buildConfigField("String", "MAL_CLIENT_ID", "\"$malClientId\"")
+        val malClientId = System.getenv("MAL_CLIENT_ID")
+            ?: project.findProperty("MAL_CLIENT_ID")?.toString()
+            ?: ""
+        buildConfigField(
+            "String",
+            "MAL_CLIENT_ID",
+            "\"$malClientId\""
+        )
     }
 
     buildFeatures {
