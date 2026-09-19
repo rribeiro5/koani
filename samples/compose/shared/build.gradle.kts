@@ -23,12 +23,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(samples.compose.runtime)
+            implementation(samples.compose.foundation)
+            implementation(samples.compose.material3)
+            implementation(samples.compose.material.icons.extended)
+            implementation(samples.compose.resources)
+            implementation(samples.compose.ui.tooling.preview)
             
             implementation(samples.koin.core)
             implementation(samples.koin.compose)
@@ -55,7 +55,7 @@ kotlin {
         }
 
         jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
+            implementation(samples.compose.desktop)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
         }
