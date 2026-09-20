@@ -27,9 +27,9 @@ internal fun PagingDataResponse?.toPagingData(): PagingData {
     return PagingData(
         nextUrl = this?.next,
         previousUrl = this?.previous,
-        nextOffset = nextParsedUrl?.parameters?.get("offset")?.toLongOrNull(),
-        previousOffset = previousParsedUrl?.parameters?.get("offset")?.toLongOrNull(),
-        limit = nextParsedUrl?.parameters?.get("limit")?.toLongOrNull()
-            ?: previousParsedUrl?.parameters?.get("limit")?.toLongOrNull()
+        nextOffset = nextParsedUrl?.parameters?.get("offset")?.toIntOrNull(),
+        previousOffset = previousParsedUrl?.parameters?.get("offset")?.toIntOrNull(),
+        limit = nextParsedUrl?.parameters?.get("limit")?.toIntOrNull()
+            ?: previousParsedUrl?.parameters?.get("limit")?.toIntOrNull()
     )
 }

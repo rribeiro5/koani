@@ -54,7 +54,7 @@ class ForumTest : BaseIntegrationTest() {
             client.forum.getForumTopics(
                 query = query,
                 limit = limit,
-                offset = firstPage.paging.nextOffset?.toInt()
+                offset = firstPage.paging.nextOffset
             )
         }
         assertEquals(limit, secondPage.data.size)
@@ -95,7 +95,7 @@ class ForumTest : BaseIntegrationTest() {
             client.forum.getForumTopicDetail(
                 topicId = topicId,
                 limit = limit,
-                offset = firstDetails.posts.paging.nextOffset?.toInt()
+                offset = firstDetails.posts.paging.nextOffset
             )
         }
         assertEquals(limit, secondDetails.posts.data.size)

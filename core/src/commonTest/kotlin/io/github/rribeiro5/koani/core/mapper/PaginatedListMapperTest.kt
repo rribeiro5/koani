@@ -23,9 +23,9 @@ class PaginatedListMapperTest {
         assertEquals(listOf("ITEM1", "ITEM2"), result.data)
         assertEquals("https://api.myanimelist.net/v2/anime?offset=10&limit=5", result.paging.nextUrl)
         assertEquals("https://api.myanimelist.net/v2/anime?offset=0&limit=5", result.paging.previousUrl)
-        assertEquals(10L, result.paging.nextOffset)
-        assertEquals(0L, result.paging.previousOffset)
-        assertEquals(5L, result.paging.limit)
+        assertEquals(10, result.paging.nextOffset)
+        assertEquals(0, result.paging.previousOffset)
+        assertEquals(5, result.paging.limit)
     }
 
     @Test
@@ -54,9 +54,9 @@ class PaginatedListMapperTest {
 
         val result = pagingResponse.toPagingData()
 
-        assertEquals(20L, result.nextOffset)
+        assertEquals(20, result.nextOffset)
         assertNull(result.previousOffset)
-        assertEquals(10L, result.limit)
+        assertEquals(10, result.limit)
     }
 
     @Test
@@ -69,8 +69,8 @@ class PaginatedListMapperTest {
         val result = pagingResponse.toPagingData()
 
         assertNull(result.nextOffset)
-        assertEquals(5L, result.previousOffset)
-        assertEquals(15L, result.limit)
+        assertEquals(5, result.previousOffset)
+        assertEquals(15, result.limit)
     }
 
     @Test

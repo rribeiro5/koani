@@ -48,7 +48,7 @@ class MangaTest : BaseIntegrationTest() {
             client.manga.getMangaList(
                 query = "Kingdom",
                 limit = limit,
-                offset = firstPage.paging.nextOffset?.toInt()
+                offset = firstPage.paging.nextOffset
             )
         }
         assertEquals(limit, secondPage.data.size)
