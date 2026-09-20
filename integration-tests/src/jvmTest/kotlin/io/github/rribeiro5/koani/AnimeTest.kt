@@ -50,7 +50,7 @@ class AnimeTest : BaseIntegrationTest() {
             client.anime.getAnimeList(
                 query = "Bleach",
                 limit = limit,
-                offset = firstPage.paging.nextOffset?.toInt()
+                offset = firstPage.paging.nextOffset
             )
         }
         assertEquals(limit, secondPage.data.size)

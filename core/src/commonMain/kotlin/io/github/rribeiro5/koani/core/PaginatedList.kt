@@ -24,7 +24,7 @@ public data class PaginatedList<T>(
 public data class PagingData(
     val nextUrl: String? = null,
     val previousUrl: String? = null,
-    val nextOffset: Long? = null,
-    val previousOffset: Long? = null,
-    val limit: Long? = null
+    val nextOffset: Int? = null,
+    val previousOffset: Int? = null,
+    val limit: Int? = null
 )
