@@ -623,10 +623,12 @@ public class KoaniClient internal constructor(private val container: KoaniContai
         /**
          * Retrieves details for a specific user.
          *
-         * @param userName The username. Use "@me" for the authenticated user.
+         * **Note:** As of the current MAL API v2 implementation, only "@me" is supported.
+         *
+         * @param userName The username. Defaults to "@me" for the authenticated user.
          * @param fields The list of optional fields to include in the response.
          * @return The [UserModel] details.
-         * @see <a href="https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_name_get">Get my user information</a>
+         * @see <a href="https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_name_get">Get user information</a>
          */
         public suspend fun getUserDetails(
             userName: String = "@me",
