@@ -73,7 +73,7 @@ class MyNewIntegrationTest : BaseIntegrationTest() {
 }
 ```
 
-Authenticated tests should opt in explicitly with `runIntegrationTest(authenticated = true) { client -> ... }`. The default remains unauthenticated and requires only the client ID. Authenticated runs require `TEST_MAL_ACCESS_TOKEN` and `TEST_MAL_REFRESH_TOKEN`.
+Authenticated tests should opt in explicitly with `runIntegrationTest(authenticated = true) { client -> ... }`. The default remains unauthenticated and requires only the client ID. Authenticated runs require `TEST_MAL_ACCESS_TOKEN` and `TEST_MAL_REFRESH_TOKEN`; these are loaded with the same Gradle-property, environment-variable, or root `local.properties` precedence.
 
 ## ⚙️ Configuration Details
 

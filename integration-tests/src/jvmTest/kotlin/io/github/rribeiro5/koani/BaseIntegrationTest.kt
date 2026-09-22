@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import io.github.rribeiro5.koani.auth.MemoryTokenManager
 import kotlin.time.Duration.Companion.seconds
 
 abstract class BaseIntegrationTest {
@@ -20,9 +21,12 @@ abstract class BaseIntegrationTest {
      * Helper to run an integration test block in a blocking coroutine scope.
      * Provides a fresh KoaniClient instance to the test block.
      */
-    protected fun runIntegrationTest(block: suspend (KoaniClient) -> Unit) {
+    protected fun runIntegrationTest(
+        authenticated: Boolean = false,
+        block: suspend (KoaniClient) -> Unit,
+    ) {
         runBlocking {
-            val client = createClient()
+            val client = createClient(authenticated)
             block(client)
         }
     }
@@ -39,9 +43,25 @@ abstract class BaseIntegrationTest {
         }
     }
 
-    protected fun createClient(): KoaniClient {
-        return KoaniClient.Builder(malClientId)
+    protected fun createClient(authenticated: Boolean = false): KoaniClient {
+        val builder = KoaniClient.Builder(malClientId)
             .timeoutMillis(30_000) // Increase timeout for integration tests
-            .build()
+        if (authenticated) {
+            val accessToken = System.getProperty("TEST_MAL_ACCESS_TOKEN")
+                ?: throw IllegalStateException(
+                    "TEST_MAL_ACCESS_TOKEN system property is not set. " +
+                        "Provide it via -PTEST_MAL_ACCESS_TOKEN, environment variable, or local.properties."
+                )
+            val refreshToken = System.getProperty("TEST_MAL_REFRESH_TOKEN")
+                ?: throw IllegalStateException(
+                    "TEST_MAL_REFRESH_TOKEN system property is not set. " +
+                        "Provide it via -PTEST_MAL_REFRESH_TOKEN, environment variable, or local.properties."
+                )
+            val tokenManager = MemoryTokenManager().apply {
+                storeTokens(accessToken, refreshToken)
+            }
+            builder.tokenManager(tokenManager)
+        }
+        return builder.build()
     }
 }

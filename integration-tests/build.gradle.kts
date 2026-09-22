@@ -28,6 +28,12 @@ kotlin {
 val malClientId: String? = project.findProperty("TEST_MAL_CLIENT_ID")?.toString()
     ?: System.getenv("TEST_MAL_CLIENT_ID")
     ?: loadFromLocalProperties("TEST_MAL_CLIENT_ID")
+val malAccessToken: String? = project.findProperty("TEST_MAL_ACCESS_TOKEN")?.toString()
+    ?: System.getenv("TEST_MAL_ACCESS_TOKEN")
+    ?: loadFromLocalProperties("TEST_MAL_ACCESS_TOKEN")
+val malRefreshToken: String? = project.findProperty("TEST_MAL_REFRESH_TOKEN")?.toString()
+    ?: System.getenv("TEST_MAL_REFRESH_TOKEN")
+    ?: loadFromLocalProperties("TEST_MAL_REFRESH_TOKEN")
 
 fun loadFromLocalProperties(propertyName: String): String? {
     val localPropertiesFile = rootProject.file("local.properties")
@@ -60,6 +66,12 @@ tasks.register<Test>("integrationTest") {
     // Pass Client ID as system property
     malClientId?.let {
         systemProperty("TEST_MAL_CLIENT_ID", it)
+    }
+    malAccessToken?.let {
+        systemProperty("TEST_MAL_ACCESS_TOKEN", it)
+    }
+    malRefreshToken?.let {
+        systemProperty("TEST_MAL_REFRESH_TOKEN", it)
     }
 
     // Force tests to run even if outputs are up to date
