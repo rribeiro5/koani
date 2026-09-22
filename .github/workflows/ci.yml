@@ -129,8 +129,14 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Integration Tests
-        run: ./gradlew :integration-tests:integrationTest -PTEST_MAL_CLIENT_ID=${{ secrets.TEST_MAL_CLIENT_ID }}
+        env:
+          TEST_MAL_CLIENT_ID: ${{ secrets.TEST_MAL_CLIENT_ID }}
+          TEST_MAL_ACCESS_TOKEN: ${{ secrets.TEST_MAL_ACCESS_TOKEN }}
+          TEST_MAL_REFRESH_TOKEN: ${{ secrets.TEST_MAL_REFRESH_TOKEN }}
+        run: ./gradlew :integration-tests:integrationTest
 
       - name: Report Integration Test Results
         if: always()
+        env:
+          TEST_MAL_REFRESH_TOKEN_EXPIRES_AT: ${{ secrets.TEST_MAL_REFRESH_TOKEN_EXPIRES_AT }}
         run: python scripts/report_integration_tests.py >> $GITHUB_STEP_SUMMARY
