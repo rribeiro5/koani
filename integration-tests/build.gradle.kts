@@ -11,6 +11,12 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core"))
         }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.serialization.json)
+            }
+        }
         
         jvmTest.dependencies {
             implementation(kotlin("test"))
@@ -58,4 +64,14 @@ tasks.register<Test>("integrationTest") {
 
     // Force tests to run even if outputs are up to date
     outputs.upToDateWhen { false }
+}
+
+tasks.register<JavaExec>("rotateTestTokens") {
+    group = "authentication"
+    description = "Runs the local MyAnimeList OAuth flow and prints integration-test token configuration."
+    mainClass.set("io.github.rribeiro5.koani.auth.TokenRotationMainKt")
+    val compilation = kotlin.targets.getByName("jvm").compilations.getByName("main")
+    classpath = files(compilation.output.allOutputs, compilation.runtimeDependencyFiles)
+    workingDir(rootProject.projectDir)
+    standardInput = System.`in`
 }
