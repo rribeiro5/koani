@@ -11,6 +11,12 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core"))
         }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.serialization.json)
+            }
+        }
         
         jvmTest.dependencies {
             implementation(kotlin("test"))
@@ -22,6 +28,12 @@ kotlin {
 val malClientId: String? = project.findProperty("TEST_MAL_CLIENT_ID")?.toString()
     ?: System.getenv("TEST_MAL_CLIENT_ID")
     ?: loadFromLocalProperties("TEST_MAL_CLIENT_ID")
+val malAccessToken: String? = project.findProperty("TEST_MAL_ACCESS_TOKEN")?.toString()
+    ?: System.getenv("TEST_MAL_ACCESS_TOKEN")
+    ?: loadFromLocalProperties("TEST_MAL_ACCESS_TOKEN")
+val malRefreshToken: String? = project.findProperty("TEST_MAL_REFRESH_TOKEN")?.toString()
+    ?: System.getenv("TEST_MAL_REFRESH_TOKEN")
+    ?: loadFromLocalProperties("TEST_MAL_REFRESH_TOKEN")
 
 fun loadFromLocalProperties(propertyName: String): String? {
     val localPropertiesFile = rootProject.file("local.properties")
@@ -55,7 +67,23 @@ tasks.register<Test>("integrationTest") {
     malClientId?.let {
         systemProperty("TEST_MAL_CLIENT_ID", it)
     }
+    malAccessToken?.let {
+        systemProperty("TEST_MAL_ACCESS_TOKEN", it)
+    }
+    malRefreshToken?.let {
+        systemProperty("TEST_MAL_REFRESH_TOKEN", it)
+    }
 
     // Force tests to run even if outputs are up to date
     outputs.upToDateWhen { false }
+}
+
+tasks.register<JavaExec>("rotateTestTokens") {
+    group = "authentication"
+    description = "Runs the local MyAnimeList OAuth flow and prints integration-test token configuration."
+    mainClass.set("io.github.rribeiro5.koani.auth.TokenRotationMainKt")
+    val compilation = kotlin.targets.getByName("jvm").compilations.getByName("main")
+    classpath = files(compilation.output.allOutputs, compilation.runtimeDependencyFiles)
+    workingDir(rootProject.projectDir)
+    standardInput = System.`in`
 }

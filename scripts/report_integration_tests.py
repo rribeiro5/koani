@@ -1,5 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 
 def report_integration_tests():
     total = 0
@@ -52,6 +53,7 @@ def report_integration_tests():
     print("### 🔗 Integration Test Results")
     if total == 0:
         print("⚠️ No integration test results found.")
+        report_refresh_token_expiry()
         return
 
     print("| 📊 Total | ✅ Passed | ❌ Failed | ⚠️ Skipped |")
@@ -62,6 +64,46 @@ def report_integration_tests():
         print("\n#### ❌ Failed Integration Tests")
         for f in failures:
             print(f"- {f}")
+
+    report_refresh_token_expiry()
+
+def report_refresh_token_expiry():
+    expiry_value = os.getenv("TEST_MAL_REFRESH_TOKEN_EXPIRES_AT")
+    if not expiry_value:
+        print()
+        print("> [!WARNING]")
+        print("> Refresh-token expiry metadata is missing.")
+        return
+
+    try:
+        expiry = datetime.fromisoformat(expiry_value.replace("Z", "+00:00"))
+        if expiry.tzinfo is None:
+            expiry = expiry.replace(tzinfo=timezone.utc)
+        expiry = expiry.astimezone(timezone.utc)
+    except ValueError:
+        print()
+        print("> [!WARNING]")
+        print("> Refresh-token expiry metadata is not a valid ISO-8601 timestamp.")
+        return
+
+    remaining = expiry - datetime.now(timezone.utc)
+    total_seconds = int(remaining.total_seconds())
+    if total_seconds < 0:
+        print()
+        print("> [!CAUTION]")
+        print(f"> Refresh token expired at `{expiry.isoformat()}`.")
+        return
+
+    days, remainder = divmod(total_seconds, 86400)
+    hours = remainder // 3600
+    if days < 10:
+        print()
+        print("> [!WARNING]")
+        print(f"> Refresh token expires in **{days} days and {hours} hours** ({expiry.isoformat()}).")
+    else:
+        print()
+        print("> [!NOTE]")
+        print(f"> Refresh token expires in **{days} days and {hours} hours** ({expiry.isoformat()}).")
 
 if __name__ == "__main__":
     report_integration_tests()

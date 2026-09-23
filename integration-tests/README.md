@@ -4,11 +4,32 @@ This module contains integration tests that run against the real **MyAnimeList A
 
 ## 🛠 Prerequisites
 
-To run these tests locally, you must provide a valid MyAnimeList Client ID. You can do this in three ways (ordered by priority):
+To run these tests locally, provide a valid MyAnimeList Client ID. You can do this in three ways (ordered by priority):
 
 1.  **Gradle Property**: Pass `-PTEST_MAL_CLIENT_ID=your_id` to the command line.
 2.  **Environment Variable**: Set `TEST_MAL_CLIENT_ID=your_id` in your system environment.
 3.  **Local Properties**: Add `TEST_MAL_CLIENT_ID=your_id` to your `local.properties` file in the project root.
+
+## 🔐 Rotating OAuth test tokens
+
+Authenticated tests use pre-issued OAuth tokens. The repository includes a local utility that completes the MyAnimeList PKCE flow through a temporary localhost callback and prints copy-ready values. It never writes tokens to disk.
+
+1. Register `http://127.0.0.1:8765/callback` as an allowed redirect URI in the MyAnimeList API application.
+2. Put the client ID in `local.properties` as `TEST_MAL_CLIENT_ID` (and `TEST_MAL_CLIENT_SECRET` if the application requires one).
+3. Run:
+
+   ```bash
+   ./gradlew :integration-tests:rotateTestTokens
+   ```
+
+   On Windows, use `gradlew.bat :integration-tests:rotateTestTokens`.
+4. Complete the browser authorization. Copy the printed `TEST_MAL_ACCESS_TOKEN`, `TEST_MAL_REFRESH_TOKEN`, and `TEST_MAL_REFRESH_TOKEN_EXPIRES_AT` values into your local secret store or CI secret manager. The utility generates the refresh-token expiry as one calendar month after the rotation time. If MyAnimeList returns `expires_in`, it is used only for the access-token expiry; if the field is absent or invalid, no access-token expiry value is printed.
+
+**Important:** The redirect URI configured in the MyAnimeList API dashboard must match the URI used by the utility exactly. This includes the scheme (`http`), host (`127.0.0.1`), port (`8765`), and path (`/callback`). A different localhost hostname, port, or path will cause the OAuth authorization to fail. If you use `--port` or `--redirect-uri`, register that exact resulting URI in the dashboard before starting the flow.
+
+The utility also supports `--port`, `--redirect-uri`, `--client-id`, and `--client-secret` overrides. If the browser does not open automatically, copy the authorization URL printed by the command into a browser.
+
+Never commit the printed values, add them to `local.properties`, or include them in logs. Rotate the access/refresh token pair before the recorded refresh-token expiry.
 
 ## 🚀 Running Tests
 
@@ -51,6 +72,8 @@ class MyNewIntegrationTest : BaseIntegrationTest() {
     }
 }
 ```
+
+Authenticated tests should opt in explicitly with `runIntegrationTest(authenticated = true) { client -> ... }`. The default remains unauthenticated and requires only the client ID. Authenticated runs require `TEST_MAL_ACCESS_TOKEN` and `TEST_MAL_REFRESH_TOKEN`; these are loaded with the same Gradle-property, environment-variable, or root `local.properties` precedence.
 
 ## ⚙️ Configuration Details
 
