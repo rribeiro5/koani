@@ -132,4 +132,49 @@ class AnimeTest : BaseIntegrationTest() {
         assertNotNull(response)
         assertTrue(response.data.isNotEmpty())
     }
+
+    @Test
+    fun `get authenticated user anime list`() = runIntegrationTest(authenticated = true) { client ->
+        val response = performRequest {
+            client.anime.getUserAnimeList()
+        }
+
+        assertNotNull(response)
+        assertTrue(response.data.isNotEmpty())
+    }
+
+    @Test
+    fun `update anime list status get details with status and delete item`() =
+        runIntegrationTest(authenticated = true) { client ->
+            val anime = performRequest {
+                client.anime.getAnimeList(query = "Naruto", limit = 1)
+            }.data.first()
+            var itemWasUpdated = false
+
+            try {
+                val updatedStatus = performRequest {
+                    client.anime.updateUserAnimeListStatus(
+                        animeId = anime.id,
+                        status = UserAnimeListStatusType.Watching,
+                    )
+                }
+                itemWasUpdated = true
+
+                assertEquals(UserAnimeListStatusType.Watching, updatedStatus.status)
+
+                val details = performRequest {
+                    client.anime.getAnimeDetails(anime.id, fields = AnimeField.entries)
+                }
+
+                assertEquals(anime.id, details.id)
+                val listStatus = assertNotNull(details.myListStatus)
+                assertEquals(UserAnimeListStatusType.Watching, listStatus.status)
+            } finally {
+                if (itemWasUpdated) {
+                    performRequest {
+                        client.anime.deleteUserAnimeListItem(anime.id)
+                    }
+                }
+            }
+        }
 }
