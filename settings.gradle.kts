@@ -34,8 +34,8 @@ dependencyResolutionManagement {
     }
 }
 
-include(":core")
-include(":auth-persistence-ksafe")
+include(":koani-core")
+include(":koani-auth-persistence-ksafe")
 include(":integration-tests")
 
 val includeSamples = providers.gradleProperty("includeSamples").orNull == "true" 
@@ -47,4 +47,3 @@ if (includeSamples) {
     include(":samples:compose:shared")
     include(":samples:compose:android-app")
 }
-
