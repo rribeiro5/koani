@@ -2,23 +2,11 @@ name: Publish documentation
 
 on:
   workflow_call:
-    inputs:
-      branch:
-        description: Branch to build and publish
-        required: false
-        type: string
-        default: main
     outputs:
       page_url:
         description: URL of the published documentation site
         value: ${{ jobs.deploy.outputs.page_url }}
   workflow_dispatch:
-    inputs:
-      branch:
-        description: Branch to build and publish
-        required: true
-        type: string
-        default: main
 
 permissions:
   contents: read
@@ -37,7 +25,7 @@ jobs:
       - name: Check out selected branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ github.ref }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
