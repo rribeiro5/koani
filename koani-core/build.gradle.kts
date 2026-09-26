@@ -5,13 +5,14 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.maven.publish)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
     alias(libs.plugins.dokka)
 }
 
 dokka {
-    moduleName.set("koani-auth-persistence-ksafe")
+    moduleName.set("koani-core")
     moduleVersion.set(libs.versions.koani.version.get())
 }
 
@@ -30,7 +31,7 @@ kotlin {
     explicitApi = ExplicitApiMode.Strict
 
     android {
-        namespace = "io.github.rribeiro5.koani.auth.persistence.ksafe"
+        namespace = "io.github.rribeiro5.koani.core"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         androidResources.enable = true
@@ -47,14 +48,47 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":core"))
-            api(libs.ksafe)
+            api(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.serialization)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.kermit)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.kermit.test)
         }
+
+        androidMain.dependencies {
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
+        }
+
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
     }
 }
 
@@ -62,7 +96,7 @@ kotlin {
 //https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
 mavenPublishing {
     publishToMavenCentral()
-    coordinates("io.github.rribeiro5.koani", "auth-persistence-ksafe", "1.0.0")
+    coordinates("io.github.rribeiro5", "koani-core", libs.versions.koani.version.get())
 
     pom {
         name = "koani"

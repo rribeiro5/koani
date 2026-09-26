@@ -8,7 +8,7 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
-                implementation(project(":core"))
+                implementation(project(":koani-core"))
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(samples.clikt)
             }

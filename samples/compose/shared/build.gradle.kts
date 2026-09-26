@@ -22,7 +22,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core"))
+            implementation(project(":koani-core"))
             implementation(samples.compose.runtime)
             implementation(samples.compose.foundation)
             implementation(samples.compose.material3)

@@ -14,8 +14,8 @@ dokka {
 }
 
 dependencies {
-    kover(project(":core"))
-    kover(project(":auth-persistence-ksafe"))
-    dokka(project(":core"))
-    dokka(project(":auth-persistence-ksafe"))
+    kover(project(":koani-core"))
+    kover(project(":koani-auth-persistence-ksafe"))
+    dokka(project(":koani-core"))
+    dokka(project(":koani-auth-persistence-ksafe"))
 }
