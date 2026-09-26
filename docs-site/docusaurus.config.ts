@@ -111,6 +111,15 @@ const config: Config = {
             },
           ],
         },
+        {
+          title: 'More',
+          items: [
+            {
+              label: 'GitHub',
+              href: 'https://github.com/rribeiro5/koani',
+            },
+          ],
+        },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Koani contributors. Built with Docusaurus.`,
     },
