@@ -1,12 +1,21 @@
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const baseUrl = '/koani/';
+const versionCatalogPath = path.resolve(__dirname, '..', 'gradle', 'libs.versions.toml');
+const versionCatalog = readFileSync(versionCatalogPath, 'utf8');
+const libraryVersion = versionCatalog.match(/^koani-version\s*=\s*"([^"]+)"$/m)?.[1];
+
+if (!libraryVersion) {
+  throw new Error(`Could not find koani-version in ${versionCatalogPath}`);
+}
 
 const config: Config = {
   title: 'Koani',
-  tagline: 'Kotlin Multiplatform library',
+  tagline: `Kotlin Multiplatform library - v${libraryVersion}`,
   url: 'https://rribeiro5.github.io',
   baseUrl,
   organizationName: 'rribeiro5',
@@ -53,7 +62,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Koani',
+      title: `Koani v${libraryVersion}`,
       items: [
         {
           type: 'docSidebar',
@@ -67,6 +76,11 @@ const config: Config = {
           position: 'left',
           target: '_blank',
           rel: 'noopener noreferrer',
+        },
+        {
+          to: '/changelog',
+          label: 'Changelog',
+          position: 'left',
         },
         {
           href: 'https://github.com/rribeiro5/koani',
@@ -90,6 +104,10 @@ const config: Config = {
               href: `${baseUrl}api/index.html`,
               target: '_blank',
               rel: 'noopener noreferrer',
+            },
+            {
+              label: 'Changelog',
+              to: '/changelog',
             },
           ],
         },
