@@ -35,6 +35,19 @@ const config: Config = {
     ],
   ],
 
+  themes: [
+    [
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        hashed: true,
+        indexBlog: false,
+        indexPages: false,
+        language: ['en'],
+        searchBarPosition: 'right',
+      },
+    ],
+  ],
+
   themeConfig: {
     colorMode: {
       respectPrefersColorScheme: true,
