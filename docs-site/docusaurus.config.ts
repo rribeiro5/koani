@@ -97,7 +97,7 @@ const config: Config = {
           items: [
             {
               label: 'Documentation',
-              to: '/docs/placeholder',
+              to: '/docs/getting-started/quickstart',
             },
             {
               label: 'API reference',
