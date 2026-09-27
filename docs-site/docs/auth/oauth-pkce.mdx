@@ -8,6 +8,10 @@ description: Authenticate users with MyAnimeList using the OAuth2 PKCE flow.
 
 MyAnimeList uses the **OAuth 2.0 Authorization Code Grant with PKCE** (Proof Key for Code Exchange) to authenticate users securely without requiring client secrets on public clients.
 
+:::info Reference
+For complete details on the underlying OAuth2 endpoints and parameter specifications, see the official [MyAnimeList Authorization Reference](https://myanimelist.net/apiconfig/references/authorization).
+:::
+
 ## Step 1: Generate Authorization URL & PKCE Verifier
 
 To start authentication, generate a random code verifier (a URL-safe string between 43 and 128 characters) and construct the authorization URL:
