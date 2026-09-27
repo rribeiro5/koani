@@ -1,0 +1,8 @@
+{
+  "label": "Authentication & Tokens",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn how to authenticate users with MyAnimeList using OAuth2 PKCE, manage tokens, and set up persistent secure storage."
+  }
+}
