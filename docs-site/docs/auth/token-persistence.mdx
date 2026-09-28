@@ -1,0 +1,103 @@
+---
+sidebar_position: 2
+title: Token Persistence
+description: Store and persist OAuth2 access and refresh tokens securely across platforms.
+---
+
+# Token Persistence
+
+To maintain user sessions across app restarts, Koani provides a `TokenManager` abstraction for loading, storing, and clearing OAuth2 tokens.
+
+## TokenManager Interface
+
+The `TokenManager` interface defines the contract for token storage:
+
+```kotlin
+public interface TokenManager {
+    public fun accessToken(): String?
+    public fun refreshToken(): String?
+    public fun storeTokens(accessToken: String, refreshToken: String?)
+    public fun clearTokens()
+}
+```
+
+## Default Storage: MemoryTokenManager
+
+By default, `KoaniClient` uses `MemoryTokenManager()`. This stores tokens in memory during the app's runtime. While useful for CLI tools and unit tests, stored tokens will be lost when the app process finishes.
+
+## Secure Storage with KSafe (`koani-auth-persistence-ksafe`)
+
+For production mobile and multiplatform apps, Koani provides the optional `koani-auth-persistence-ksafe` module. It uses **KSafe** to store tokens securely using platform-native encrypted storage (such as EncryptedSharedPreferences on Android and Keychain on iOS).
+
+### 1. Add the Dependency
+
+Add `koani-auth-persistence-ksafe` to your `build.gradle.kts`:
+
+```kotlin title="build.gradle.kts"
+commonMain.dependencies {
+    implementation("io.github.rribeiro5:koani-auth-persistence-ksafe:<latest_version>")
+}
+```
+
+### 2. Configure KoaniClient with KSafeTokenManager
+
+Pass `KSafeTokenManager` when initializing `KoaniClient`:
+
+```kotlin
+import io.github.rribeiro5.koani.KoaniClient
+import io.github.rribeiro5.koani.auth.persistence.ksafe.KSafeTokenManager
+import eu.anifantakis.lib.ksafe.KSafe
+
+// Initialize KSafe storage instance
+val kSafe = KSafe()
+val tokenManager = KSafeTokenManager(kSafe)
+
+val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
+    .tokenManager(tokenManager)
+    .build()
+```
+
+Once configured, Koani automatically persists access and refresh tokens upon successful authentication or token refresh, restoring them on future app launches.
+
+## Custom TokenManager Implementation
+
+If your project uses Android DataStore, Room, SQLDelight, or another persistence mechanism, you can implement `TokenManager`:
+
+```kotlin
+import io.github.rribeiro5.koani.auth.TokenManager
+
+class DataStoreTokenManager(
+    private val encryptedPreferences: EncryptedPreferencesStorage
+) : TokenManager {
+
+    override fun accessToken(): String? {
+        return encryptedPreferences.getString("access_token")
+    }
+
+    override fun refreshToken(): String? {
+        return encryptedPreferences.getString("refresh_token")
+    }
+
+    override fun storeTokens(accessToken: String, refreshToken: String?) {
+        encryptedPreferences.putString("access_token", accessToken)
+        if (refreshToken != null) {
+            encryptedPreferences.putString("refresh_token", refreshToken)
+        } else {
+            encryptedPreferences.remove("refresh_token")
+        }
+    }
+
+    override fun clearTokens() {
+        encryptedPreferences.remove("access_token")
+        encryptedPreferences.remove("refresh_token")
+    }
+}
+```
+
+Pass your custom implementation to `KoaniClient.Builder`:
+
+```kotlin
+val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
+    .tokenManager(DataStoreTokenManager(encryptedStorage))
+    .build()
+```

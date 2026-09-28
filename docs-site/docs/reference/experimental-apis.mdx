@@ -1,0 +1,51 @@
+---
+sidebar_position: 1
+title: Experimental APIs
+description: Understand API stability annotations and opt-in requirements in Koani.
+---
+
+# Experimental APIs
+
+Certain features or extension modules in Koani (such as persistent storage bindings) are marked with the `@ExperimentalKoaniApi` annotation.
+
+## The `@ExperimentalKoaniApi` Annotation
+
+`@ExperimentalKoaniApi` indicates that an API or class signature is new or undergoing design iteration. Its behavior or method signature may change in future releases without adhering to strict semantic versioning deprecation cycles.
+
+```kotlin
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "This API is experimental and its signature may change in the future."
+)
+public annotation class ExperimentalKoaniApi
+```
+
+## Opting In to Experimental APIs
+
+To consume APIs annotated with `@ExperimentalKoaniApi`, opt in using either code annotations or Gradle compiler flags.
+
+### Option 1: File or Function Annotation
+
+Annotate your consuming function, class, or file with `@OptIn`:
+
+```kotlin
+import io.github.rribeiro5.koani.ExperimentalKoaniApi
+import io.github.rribeiro5.koani.auth.persistence.ksafe.KSafeTokenManager
+
+@OptIn(ExperimentalKoaniApi::class)
+fun createPersistentTokenManager(kSafe: KSafe): KSafeTokenManager {
+    return KSafeTokenManager(kSafe)
+}
+```
+
+### Option 2: Project-wide Gradle Opt-In
+
+To opt in across your entire module, add the free compiler argument to your module's `build.gradle.kts`:
+
+```kotlin title="build.gradle.kts"
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=io.github.rribeiro5.koani.ExperimentalKoaniApi")
+    }
+}
+```

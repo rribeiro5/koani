@@ -1,0 +1,106 @@
+---
+sidebar_position: 1
+title: OAuth2 & PKCE Flow
+description: Authenticate users with MyAnimeList using the OAuth2 PKCE flow.
+---
+
+# OAuth2 & PKCE Flow
+
+MyAnimeList uses the **OAuth 2.0 Authorization Code Grant with PKCE** (Proof Key for Code Exchange) to authenticate users securely without requiring client secrets on public clients.
+
+:::info Reference
+For complete details on the underlying OAuth2 endpoints and parameter specifications, see the official [MyAnimeList Authorization Reference](https://myanimelist.net/apiconfig/references/authorization).
+:::
+
+## Step 1: Generate Authorization URL & PKCE Verifier
+
+To start authentication, generate a random code verifier (a URL-safe string between 43 and 128 characters) and construct the authorization URL:
+
+```kotlin
+import io.ktor.http.URLBuilder
+import io.ktor.http.encodeURLQueryComponent
+
+fun buildAuthorizationUrl(
+    clientId: String,
+    redirectUri: String,
+    codeVerifier: String,
+    state: String? = null
+): String {
+    val builder = URLBuilder("https://myanimelist.net/v1/oauth2/authorize").apply {
+        parameters.append("response_type", "code")
+        parameters.append("client_id", clientId)
+        parameters.append("redirect_uri", redirectUri)
+        parameters.append("code_challenge", codeVerifier)
+        parameters.append("code_challenge_method", "plain")
+        if (state != null) {
+            parameters.append("state", state)
+        }
+    }
+    return builder.buildString()
+}
+```
+
+## Step 2: Direct the User to the Authorization URL
+
+Open the authorization URL in a Custom Tab (Android), `ASWebAuthenticationSession` (iOS), or default web browser (Desktop/JVM):
+
+```kotlin
+val codeVerifier = "YOUR_SECURE_RANDOM_CODE_VERIFIER" // e.g. 64-character URL-safe string
+val authUrl = buildAuthorizationUrl(
+    clientId = "YOUR_CLIENT_ID",
+    redirectUri = "myapp://oauth/callback", // Registered redirect URI in MyAnimeList App Console
+    codeVerifier = codeVerifier
+)
+
+// Open authUrl in browser / Custom Tab
+```
+
+## Step 3: Capture the Authorization Code
+
+When the user grants access, MyAnimeList redirects back to your `redirect_uri` with a `code` parameter:
+
+`myapp://oauth/callback?code=AUTHORIZATION_CODE_HERE&state=STATE_HERE`
+
+Extract the `code` query parameter from the callback URI.
+
+## Step 4: Exchange Authorization Code for Tokens
+
+Pass the authorization code and original `codeVerifier` to `client.auth.authenticate`:
+
+```kotlin
+val session = client.auth.authenticate(
+    authorizationCode = authorizationCode,
+    codeVerifier = codeVerifier,
+    redirectUri = "myapp://oauth/callback" // Must match the redirect URI used in Step 1
+)
+
+println("Access Token: ${session.accessToken}")
+println("Refresh Token: ${session.refreshToken}")
+println("Expires In: ${session.expiresIn} seconds")
+```
+
+`client.auth.authenticate` automatically saves the access and refresh tokens into the client's configured `TokenManager`.
+
+## Automatic & Manual Token Refresh
+
+### Automatic Refresh
+
+Koani handles token expiration transparently. When an API call receives an HTTP 401 Unauthorized status, the internal Ktor client interceptor uses the stored refresh token to obtain a new session and retries the original request automatically.
+
+### Manual Refresh
+
+If you need to trigger token refresh explicitly:
+
+```kotlin
+val newSession = client.auth.refreshTokens()
+```
+
+## Logging Out Users
+
+To clear stored tokens and end the session:
+
+```kotlin
+client.auth.logout()
+```
+
+Calling `logout()` clears tokens from the configured `TokenManager`, preventing subsequent authenticated requests until the user logs in again.

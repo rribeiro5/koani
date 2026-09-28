@@ -628,7 +628,7 @@ public class KoaniClient internal constructor(private val container: KoaniContai
          * @param userName The username. Defaults to "@me" for the authenticated user.
          * @param fields The list of optional fields to include in the response.
          * @return The [UserModel] details.
-         * @see <a href="https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_name_get">Get user information</a>
+         * @see <a href="https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_get">Get user information</a>
          */
         public suspend fun getUserDetails(
             userName: String = "@me",

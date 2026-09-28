@@ -1,0 +1,56 @@
+---
+sidebar_position: 2
+title: HTTP & Logging
+description: Learn how Koani handles network configuration, timeouts, logging, and security.
+---
+
+# HTTP & Logging
+
+Koani leverages **Ktor HTTP Client** under the hood to perform efficient, asynchronous, cross-platform network requests. You can configure timeouts and log levels directly through `KoaniClient.Builder`.
+
+## Network Timeouts
+
+You can set custom request, connection, and socket timeouts using `timeoutMillis`:
+
+```kotlin
+val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
+    .timeoutMillis(20_000L) // 20 seconds for connect, request, and socket timeouts
+    .build()
+```
+
+If a network request exceeds the specified duration, a `KoaniException` wrapping a timeout exception will be thrown.
+
+## Configuring Log Levels
+
+Koani provides structured logging via the Kermit multiplatform logger. Set the desired verbosity using `logLevel`:
+
+```kotlin
+import io.github.rribeiro5.koani.LogLevel
+
+val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
+    .logLevel(LogLevel.DEBUG)
+    .build()
+```
+
+### Available Log Levels
+
+* `LogLevel.NONE` *(Default)*: Disables all internal logging.
+* `LogLevel.ERROR`: Logs critical failures and exceptions.
+* `LogLevel.WARN`: Logs warning conditions.
+* `LogLevel.INFO`: Logs high-level client lifecycle events.
+* `LogLevel.DEBUG`: Logs detailed troubleshooting information and request metadata.
+* `LogLevel.VERBOSE`: Logs full HTTP request and response details.
+
+## Automatic Security & Header Sanitization
+
+When logging is enabled, sensitive headers are automatically redacted to prevent tokens from appearing in log outputs or crash reporting tools:
+
+* The `Authorization` bearer token header is automatically sanitized.
+* The `X-MAL-CLIENT-ID` header is automatically sanitized.
+
+## JSON & Content Negotiation
+
+Koani uses `kotlinx.serialization` for JSON parsing with defensive defaults:
+
+* **Unknown Keys Ignored:** Unrecognized fields returned by the MyAnimeList API will not cause parsing failures. This ensures your app remains resilient when MyAnimeList updates or expands their API schema.
+* **Automatic Bearer Injection:** Authenticated requests automatically attach valid Bearer tokens and handle 401 token refresh flows behind the scenes.

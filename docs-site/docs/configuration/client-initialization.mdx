@@ -1,0 +1,85 @@
+---
+sidebar_position: 1
+title: Client Initialization
+description: Configure and instantiate KoaniClient using the Builder pattern.
+---
+
+# Client Initialization
+
+`KoaniClient` is the main entry point for interacting with the MyAnimeList API. You instantiate it using `KoaniClient.Builder`, which allows you to customize credentials, token storage, timeouts, and logging levels.
+
+## Basic Initialization
+
+To make unauthenticated API requests (such as searching anime, fetching public manga details, or browsing forums), you only need a MyAnimeList **Client ID**:
+
+```kotlin
+import io.github.rribeiro5.koani.KoaniClient
+
+val client = KoaniClient.Builder(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
+    .build()
+```
+
+## Advanced Configuration
+
+For apps that require user authentication, custom token storage, network timeouts, or debug logging, configure the builder accordingly:
+
+```kotlin
+import io.github.rribeiro5.koani.KoaniClient
+import io.github.rribeiro5.koani.LogLevel
+import io.github.rribeiro5.koani.auth.persistence.ksafe.KSafeTokenManager
+import eu.anifantakis.lib.ksafe.KSafe
+
+// Optional secure token manager using KSafe
+val kSafe = KSafe()
+val persistentTokenManager = KSafeTokenManager(kSafe)
+
+val client = KoaniClient.Builder(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
+    .clientSecret("YOUR_OPTIONAL_CLIENT_SECRET") // Optional
+    .tokenManager(persistentTokenManager)        // Optional: Custom or persistent token manager
+    .timeoutMillis(30_000L)                      // Optional: 30 second timeout
+    .logLevel(LogLevel.DEBUG)                    // Optional: Debug logging
+    .build()
+```
+
+## Builder Options Summary
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `clientId` | `String` | *(Required)* | Your MyAnimeList application Client ID. |
+| `clientSecret` | `String?` | `null` | Your MyAnimeList Client Secret (if required by your API app type). |
+| `tokenManager` | `TokenManager` | `MemoryTokenManager()` | Strategy for storing and retrieving OAuth2 access/refresh tokens. |
+| `timeoutMillis` | `Long?` | `null` | Timeout in milliseconds for request, connect, and socket timeouts. |
+| `logLevel` | `LogLevel` | `LogLevel.NONE` | Severity level for internal client logging and network requests. |
+
+## Managing Client Instances
+
+For best performance and resource utilization, maintain a single instance of `KoaniClient` across your application lifetime.
+
+### Koin Example
+
+```kotlin
+val appModule = module {
+    single {
+        KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
+            .logLevel(LogLevel.INFO)
+            .build()
+    }
+}
+```
+
+### Hilt Example
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object KoaniModule {
+
+    @Provides
+    @Singleton
+    fun provideKoaniClient(): KoaniClient {
+        return KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
+            .timeoutMillis(15_000L)
+            .build()
+    }
+}
+```

@@ -1,0 +1,46 @@
+---
+sidebar_position: 1
+title: Field Selection
+description: Request specific response fields to optimize network payload size and performance.
+---
+
+# Field Selection
+
+By default, the MyAnimeList API returns a lightweight set of basic fields (such as ID, title, and main picture URL). To retrieve additional details like synopsis, mean score, genres, or background info, Koani provides type-safe field enums.
+
+## Type-Safe Field Enums
+
+Koani includes dedicated field enums for each entity type:
+
+* **`AnimeField`**: Optional fields for anime queries (e.g. `SYNOPSIS`, `MEAN`, `GENRES`, `START_DATE`, `PICTURES`, `RECOMMENDATIONS`).
+* **`MangaField`**: Optional fields for manga queries (e.g. `SYNOPSIS`, `MEAN`, `NUM_CHAPTERS`, `NUM_VOLUMES`, `AUTHORS`).
+* **`UserField`**: Optional fields for user profiles (e.g. `ANIME_STATISTICS`, `LOCATION`, `JOINED_AT`, `TIME_ZONE`).
+
+## Requesting Custom Fields
+
+Pass a list of field enum values to the `fields` parameter of any query method:
+
+```kotlin
+import io.github.rribeiro5.koani.anime.AnimeField
+
+val animeDetails = client.anime.getAnimeDetails(
+    animeId = 5114,
+    fields = listOf(
+        AnimeField.SYNOPSIS,
+        AnimeField.MEAN,
+        AnimeField.RANK,
+        AnimeField.GENRES,
+        AnimeField.NUM_EPISODES,
+        AnimeField.STUDIOS
+    )
+)
+
+println("Score: ${animeDetails.mean}")
+println("Synopsis: ${animeDetails.synopsis}")
+```
+
+## Performance & Optimization Benefits
+
+* **Payload Reduction:** Mobile and bandwidth-constrained devices download only the exact data required by your UI components.
+* **Faster Serialization:** Parsing smaller JSON payloads reduces CPU and memory overhead during response deserialization.
+* **Type Safety:** Compiler verification prevents typos in field parameter names.

@@ -1,0 +1,103 @@
+---
+sidebar_position: 1
+title: Quickstart
+description: Get started with Koani in your Kotlin Multiplatform or platform-specific project.
+---
+
+# Quickstart
+
+This guide will help you integrate **Koani** into your project and make your first request to the MyAnimeList API.
+
+## 1. Add Dependencies
+
+Add the Koani dependencies to your build configuration. Replace `<latest_version>` with the latest released version.
+
+### Option A: Gradle Version Catalog (`gradle/libs.versions.toml`)
+
+```toml title="gradle/libs.versions.toml"
+[versions]
+koani = "<latest_version>"
+
+[libraries]
+# Core library (Required)
+koani-core = { module = "io.github.rribeiro5:koani-core", version.ref = "koani" }
+
+# Optional: Secure token persistence using KSafe
+koani-auth-persistence-ksafe = { module = "io.github.rribeiro5:koani-auth-persistence-ksafe", version.ref = "koani" }
+```
+
+Then in your module's `build.gradle.kts`:
+
+```kotlin title="build.gradle.kts"
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            // Core client library
+            implementation(libs.koani.core)
+
+            // Optional: Secure token persistence support
+            implementation(libs.koani.auth.persistence.ksafe)
+        }
+    }
+}
+```
+
+### Option B: Direct Gradle Dependencies (`build.gradle.kts`)
+
+```kotlin title="build.gradle.kts"
+dependencies {
+    // Required: Core client library
+    implementation("io.github.rribeiro5:koani-core:<latest_version>")
+
+    // Optional: Secure token persistence support
+    implementation("io.github.rribeiro5:koani-auth-persistence-ksafe:<latest_version>")
+}
+```
+
+## 2. Initialize the Client
+
+Create a `KoaniClient` instance using `KoaniClient.Builder`. You need a valid MyAnimeList **Client ID**.
+
+```kotlin
+import io.github.rribeiro5.koani.KoaniClient
+
+val client = KoaniClient.Builder()
+    .clientId("YOUR_MYANIMELIST_CLIENT_ID")
+    .build()
+```
+
+## 3. Make Your First Request
+
+Use the `client.anime` service to search for an anime or fetch details by ID:
+
+```kotlin
+import io.github.rribeiro5.koani.error.KoaniException
+
+suspend fun fetchAnime() {
+    try {
+        // Search for anime
+        val searchResult = client.anime.searchAnime(
+            query = "Fullmetal Alchemist",
+            limit = 5
+        )
+
+        searchResult.data.forEach { anime ->
+            println("${anime.id}: ${anime.title}")
+        }
+
+        // Fetch detailed information for a specific anime ID
+        val animeDetails = client.anime.getAnimeDetails(animeId = 5114)
+        println("Title: ${animeDetails.title}")
+        println("Mean Score: ${animeDetails.mean}")
+    } catch (e: KoaniException) {
+        println("Koani API Error: ${e.message}")
+    }
+}
+```
+
+## Next Steps
+
+* Explore [Multiplatform Setup](./multiplatform.mdx) for target-specific configuration options.
+* Learn about [Client Configuration](../configuration/client-initialization) to customize logging and HTTP engines.
+* See [OAuth2 & PKCE Flow](../auth/oauth-pkce) to authenticate users with MyAnimeList accounts.
+* Check out the [Anime API Guide](../guides/anime) for searching, ranking, and updating user anime lists.

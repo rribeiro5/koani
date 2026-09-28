@@ -1,0 +1,71 @@
+---
+sidebar_position: 2
+title: Multiplatform Setup
+description: Learn about target platform support and platform-specific configurations for Koani.
+---
+
+# Multiplatform Setup
+
+Koani is built from the ground up for **Kotlin Multiplatform**, allowing you to share your MyAnimeList integration code seamlessly across Android, iOS, Desktop, WebAssembly, and JavaScript targets.
+
+## Supported Platforms per Artifact
+
+| Artifact | Supported Targets | Platform Notes & Engines |
+| :--- | :--- | :--- |
+| **`koani-core`** | • Android (`androidMain`)<br/>• JVM (`jvmMain`)<br/>• iOS (`iosArm64`, `iosSimulatorArm64`)<br/>• JavaScript (`jsMain`)<br/>• WebAssembly (`wasmJsMain`) | • Android: Min SDK 24, uses Ktor OkHttp engine<br/>• JVM: Java 17+, uses Ktor OkHttp engine<br/>• iOS: Uses Ktor Darwin engine<br/>• JS / WasmJS: Uses Ktor JS Fetch engine |
+| **`koani-auth-persistence-ksafe`** *(Optional)* | • Android (`androidMain`)<br/>• JVM (`jvmMain`)<br/>• iOS (`iosArm64`, `iosSimulatorArm64`)<br/>• JavaScript (`jsMain`)<br/>• WebAssembly (`wasmJsMain`) | Encrypted and secure token persistence powered by KSafe |
+
+## Target-Specific Setup
+
+### Android Setup
+
+Ensure your app's `AndroidManifest.xml` has the `INTERNET` permission enabled:
+
+```xml title="AndroidManifest.xml"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>
+```
+
+**Requirements:**
+* **Minimum SDK:** 24+
+* **Compile SDK:** 36
+
+### iOS Setup
+
+Koani works out of the box with `iosArm64` and `iosSimulatorArm64` targets using the native Darwin engine. No extra CocoaPods or Swift dependencies are required for core API calls.
+
+When using token persistence with `koani-auth-persistence-ksafe`, tokens are securely saved using iOS Keychain services via KSafe.
+
+### JVM (Desktop & Server) Setup
+
+Koani targets Java 17+ and uses the OkHttp engine under the hood. It integrates smoothly with Compose for Desktop or server-side Kotlin applications.
+
+### Web (JavaScript & WasmJS) Setup
+
+Koani supports both browser JS and WasmJS targets using browser fetch mechanisms. Make sure your browser environment allows CORS requests to `https://api.myanimelist.net/v2`.
+
+## Source Set Configuration Example
+
+Here is a standard `build.gradle.kts` configuration for a Multiplatform project using Koani:
+
+```kotlin title="build.gradle.kts"
+kotlin {
+    androidTarget()
+    jvm()
+    iosArm64()
+    iosSimulatorArm64()
+    js { browser() }
+    wasmJs { browser() }
+
+    sourceSets {
+        commonMain.dependencies {
+            // Core Koani dependency
+            implementation("io.github.rribeiro5:koani-core:<latest_version>")
+
+            // Optional: KSafe secure token persistence
+            implementation("io.github.rribeiro5:koani-auth-persistence-ksafe:<latest_version>")
+        }
+    }
+}
+```
