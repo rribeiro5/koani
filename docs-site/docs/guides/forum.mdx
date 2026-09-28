@@ -1,0 +1,71 @@
+---
+sidebar_position: 4
+title: Forum API Guide
+description: Browse MyAnimeList forum categories, topic lists, and discussion posts.
+---
+
+# Forum API Guide
+
+The `client.forum` service allows applications to browse MyAnimeList forum categories, sub-boards, active discussion threads, and post comments.
+
+:::info API Reference
+These methods interact with the official [MyAnimeList Forum Endpoints](https://myanimelist.net/apiconfig/references/api/v2#tag/forum).
+:::
+
+## Fetching Forum Boards & Categories
+
+Retrieve the list of forum categories and sub-boards using `getForumBoards`:
+
+```kotlin
+val forumBoards = client.forum.getForumBoards()
+
+forumBoards.categories.forEach { category ->
+    println("Category: ${category.title}")
+    category.boards.forEach { board ->
+        println("  Board #${board.id}: ${board.title} - ${board.description}")
+    }
+}
+```
+
+* **API Endpoint:** [`GET /forum/boards`](https://myanimelist.net/apiconfig/references/api/v2#operation/forum_boards_get)
+
+## Searching & Querying Forum Topics
+
+Search for forum topics by keyword or filter by board ID:
+
+```kotlin
+val topics = client.forum.getForumTopics(
+    query = "Spring 2024 Anime",
+    limit = 10,
+    offset = 0
+)
+
+topics.data.forEach { topic ->
+    println("Topic #${topic.id}: ${topic.title} by ${topic.createdBy.name}")
+    println("  Posts: ${topic.numberOfPosts}, Last Post: ${topic.lastPostCreatedAt}")
+}
+```
+
+* **API Endpoint:** [`GET /forum/topics`](https://myanimelist.net/apiconfig/references/api/v2#operation/forum_topics_get)
+
+## Fetching Topic Discussion Posts
+
+Fetch a topic thread along with its posts and comments using `getForumTopicDetail`:
+
+```kotlin
+val topicDetail = client.forum.getForumTopicDetail(
+    topicId = 123456,
+    limit = 20,
+    offset = 0
+)
+
+println("Topic Title: ${topicDetail.data.title}")
+println("Total Posts: ${topicDetail.data.posts.size}")
+
+topicDetail.data.posts.forEach { post ->
+    println("${post.createdBy.name} at ${post.createdAt}:")
+    println(post.body)
+}
+```
+
+* **API Endpoint:** [`GET /forum/topic/{topic_id}`](https://myanimelist.net/apiconfig/references/api/v2#operation/forum_topic_get)

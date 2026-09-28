@@ -1,0 +1,132 @@
+---
+sidebar_position: 2
+title: Manga API Guide
+description: Learn how to search, fetch details, query rankings, and update user manga lists.
+---
+
+# Manga API Guide
+
+The `client.manga` service provides access to MyAnimeList manga metadata, rankings, and user reading list management.
+
+:::info API Reference
+These methods interact with the official [MyAnimeList Manga Endpoints](https://myanimelist.net/apiconfig/references/api/v2#tag/manga).
+:::
+
+## Searching Manga
+
+Search for manga by title or keyword using `getMangaList`:
+
+```kotlin
+val searchResult = client.manga.getMangaList(
+    query = "Berserk",
+    limit = 10,
+    offset = 0
+)
+
+searchResult.data.forEach { manga ->
+    println("${manga.id}: ${manga.title}")
+}
+```
+
+* **API Endpoint:** [`GET /manga`](https://myanimelist.net/apiconfig/references/api/v2#operation/manga_get)
+
+## Fetching Manga Details
+
+Fetch complete information for a specific manga by its ID:
+
+```kotlin
+import io.github.rribeiro5.koani.manga.MangaField
+
+val manga = client.manga.getMangaDetails(
+    mangaId = 2,
+    fields = listOf(
+        MangaField.SYNOPSIS,
+        MangaField.MEAN,
+        MangaField.GENRES,
+        MangaField.NUM_CHAPTERS,
+        MangaField.NUM_VOLUMES
+    )
+)
+
+println("Title: ${manga.title}")
+println("Score: ${manga.mean}")
+println("Chapters: ${manga.numChapters}")
+```
+
+* **API Endpoint:** [`GET /manga/{manga_id}`](https://myanimelist.net/apiconfig/references/api/v2#operation/manga_manga_id_get)
+
+## Manga Rankings
+
+Query top-ranked manga by category using `MangaRankingType`:
+
+```kotlin
+import io.github.rribeiro5.koani.manga.MangaRankingType
+
+val topManga = client.manga.getMangaRanking(
+    rankingType = MangaRankingType.ALL,
+    limit = 5
+)
+
+topManga.data.forEach { ranked ->
+    println("#${ranked.ranking.rank}: ${ranked.node.title}")
+}
+```
+
+* **Available Ranking Types:** `ALL`, `MANGA`, `NOVELS`, `ONESHOTS`, `DOUJIN`, `MANHWA`, `MANHUA`, `BY_POPULARITY`, `FAVORITE`.
+* **API Endpoint:** [`GET /manga/ranking`](https://myanimelist.net/apiconfig/references/api/v2#operation/manga_ranking_get)
+
+## User Manga List Management
+
+:::note Authentication Required
+Updating or reading user reading lists requires an authenticated session.
+:::
+
+### Get User Manga List
+
+Fetch a user's manga reading list:
+
+```kotlin
+import io.github.rribeiro5.koani.manga.UserMangaListStatusType
+
+val userMangaList = client.manga.getUserMangaList(
+    userName = "@me", // or specific username
+    status = UserMangaListStatusType.READING,
+    limit = 20
+)
+
+userMangaList.data.forEach { item ->
+    println("${item.node.title} - Chapters Read: ${item.listStatus?.numChaptersRead}")
+}
+```
+
+* **API Endpoint:** [`GET /users/{user_name}/mangalist`](https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_name_mangalist_get)
+
+### Update Manga List Item
+
+Add or update a manga entry's status, chapters read, or score:
+
+```kotlin
+import io.github.rribeiro5.koani.manga.UserMangaListStatus
+
+val updatedStatus = client.manga.updateUserMangaListStatus(
+    mangaId = 2,
+    status = UserMangaListStatus.READING,
+    score = 10,
+    numChaptersRead = 150,
+    numVolumesRead = 18
+)
+
+println("Updated status: ${updatedStatus.status}, Chapters Read: ${updatedStatus.numChaptersRead}")
+```
+
+* **API Endpoint:** [`PUT /manga/{manga_id}/my_list_status`](https://myanimelist.net/apiconfig/references/api/v2#operation/manga_manga_id_my_list_status_put)
+
+### Delete Manga List Item
+
+Remove an entry from the user's manga reading list:
+
+```kotlin
+client.manga.deleteUserMangaListItem(mangaId = 2)
+```
+
+* **API Endpoint:** [`DELETE /manga/{manga_id}/my_list_status`](https://myanimelist.net/apiconfig/references/api/v2#operation/manga_manga_id_my_list_status_delete)

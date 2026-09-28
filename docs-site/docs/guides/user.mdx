@@ -1,0 +1,59 @@
+---
+sidebar_position: 3
+title: User Profile Guide
+description: Fetch profile details and statistics for the authenticated MyAnimeList user.
+---
+
+# User Profile Guide
+
+The `client.user` service provides access to MyAnimeList user profile information and user-level anime statistics.
+
+:::info API Reference
+These methods interact with the official [MyAnimeList User Endpoints](https://myanimelist.net/apiconfig/references/api/v2#tag/user).
+:::
+
+## Fetching Authenticated User Profile
+
+To retrieve the currently authenticated user's profile, call `getUserDetails` with the default username `"@me"`:
+
+```kotlin
+import io.github.rribeiro5.koani.user.UserField
+
+val userProfile = client.user.getUserDetails(
+    userName = "@me",
+    fields = listOf(
+        UserField.ID,
+        UserField.NAME,
+        UserField.PICTURE,
+        UserField.LOCATION,
+        UserField.JOINED_AT,
+        UserField.ANIME_STATISTICS
+    )
+)
+
+println("Username: ${userProfile.name}")
+println("Location: ${userProfile.location}")
+println("Total Episodes Watched: ${userProfile.animeStatistics?.numEpisodes}")
+println("Mean Score: ${userProfile.animeStatistics?.meanScore}")
+```
+
+* **API Endpoint:** [`GET /users/{user_name}`](https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_id_get)
+
+:::note Note
+As of the current MyAnimeList API v2 implementation, only the authenticated user profile (`"@me"`) is supported by the MyAnimeList backend for this endpoint.
+:::
+
+## Available User Fields
+
+When fetching user profile details, you can request specific fields using `UserField`:
+
+* `UserField.ID`: Unique user ID.
+* `UserField.NAME`: Account username.
+* `UserField.PICTURE`: Profile avatar image URL.
+* `UserField.GENDER`: Gender string.
+* `UserField.BIRTHDAY`: Birthday string.
+* `UserField.LOCATION`: User location setting.
+* `UserField.JOINED_AT`: Account registration timestamp.
+* `UserField.ANIME_STATISTICS`: Breakdown of anime statistics (days watched, mean score, completed count, etc.).
+* `UserField.TIME_ZONE`: Configured time zone.
+* `UserField.IS_SUPPORTER`: Boolean flag indicating MAL supporter status.

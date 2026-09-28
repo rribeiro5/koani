@@ -1,0 +1,166 @@
+---
+sidebar_position: 1
+title: Anime API Guide
+description: Learn how to search, fetch details, query rankings, and update user anime lists.
+---
+
+# Anime API Guide
+
+The `client.anime` service provides access to MyAnimeList anime metadata, rankings, seasonal schedules, personalized recommendations, and user list management.
+
+:::info API Reference
+These methods interact with the official [MyAnimeList Anime Endpoints](https://myanimelist.net/apiconfig/references/api/v2#tag/anime).
+:::
+
+## Searching Anime
+
+Search for anime by title or keyword using `getAnimeList`:
+
+```kotlin
+val searchResult = client.anime.getAnimeList(
+    query = "Attack on Titan",
+    limit = 10,
+    offset = 0
+)
+
+searchResult.data.forEach { anime ->
+    println("${anime.id}: ${anime.title}")
+}
+```
+
+* **API Endpoint:** [`GET /anime`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_get)
+
+## Fetching Anime Details
+
+Fetch complete information for a specific anime by its ID:
+
+```kotlin
+import io.github.rribeiro5.koani.anime.AnimeField
+
+val anime = client.anime.getAnimeDetails(
+    animeId = 16498,
+    fields = listOf(
+        AnimeField.SYNOPSIS,
+        AnimeField.MEAN,
+        AnimeField.GENRES,
+        AnimeField.NUM_EPISODES
+    )
+)
+
+println("Title: ${anime.title}")
+println("Score: ${anime.mean}")
+println("Synopsis: ${anime.synopsis}")
+```
+
+* **API Endpoint:** [`GET /anime/{anime_id}`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get)
+
+## Anime Rankings
+
+Query top-ranked anime by category using `AnimeRankingType`:
+
+```kotlin
+import io.github.rribeiro5.koani.anime.AnimeRankingType
+
+val topAnime = client.anime.getAnimeRanking(
+    rankingType = AnimeRankingType.ALL,
+    limit = 5
+)
+
+topAnime.data.forEach { ranked ->
+    println("#${ranked.ranking.rank}: ${ranked.node.title}")
+}
+```
+
+* **Available Ranking Types:** `ALL`, `AIRING`, `UPCOMING`, `TV`, `OVA`, `MOVIE`, `SPECIAL`, `BY_POPULARITY`, `FAVORITE`.
+* **API Endpoint:** [`GET /anime/ranking`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_ranking_get)
+
+## Seasonal Anime
+
+Fetch anime schedules for a specific year and season:
+
+```kotlin
+import io.github.rribeiro5.koani.anime.Season
+import io.github.rribeiro5.koani.anime.SeasonalAnimeSort
+
+val seasonalList = client.anime.getSeasonalAnimes(
+    year = 2024,
+    season = Season.SUMMER,
+    sort = SeasonalAnimeSort.ANIME_SCORE,
+    limit = 10
+)
+
+seasonalList.data.forEach { anime ->
+    println("${anime.title} (${anime.mean})")
+}
+```
+
+* **API Endpoint:** [`GET /anime/season/{year}/{season}`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_season_year_season_get)
+
+## Suggested Anime Recommendations
+
+Fetch personalized anime recommendations for the authenticated user:
+
+```kotlin
+val suggestions = client.anime.getSuggestedAnimes(limit = 10)
+
+suggestions.data.forEach { anime ->
+    println("Recommended: ${anime.title}")
+}
+```
+
+* **API Endpoint:** [`GET /anime/suggestions`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_suggestions_get)
+
+## User Anime List Management
+
+:::note Authentication Required
+Updating or reading user list items requires an authenticated session.
+:::
+
+### Get User Anime List
+
+Fetch a user's anime list filtered by status:
+
+```kotlin
+import io.github.rribeiro5.koani.anime.UserAnimeListStatusType
+
+val userList = client.anime.getUserAnimeList(
+    userName = "@me", // or specific username
+    status = UserAnimeListStatusType.WATCHING,
+    limit = 20
+)
+
+userList.data.forEach { item ->
+    println("${item.node.title} - Score: ${item.listStatus?.score}")
+}
+```
+
+* **API Endpoint:** [`GET /users/{user_name}/animelist`](https://myanimelist.net/apiconfig/references/api/v2#operation/users_user_name_animelist_get)
+
+### Update Anime List Item
+
+Add or update an anime's status, score, or episode progress:
+
+```kotlin
+import io.github.rribeiro5.koani.anime.UserAnimeListStatus
+
+val updatedStatus = client.anime.updateUserAnimeListStatus(
+    animeId = 5114,
+    status = UserAnimeListStatus.COMPLETED,
+    score = 10,
+    numEpisodesWatched = 64
+)
+
+println("Updated status: ${updatedStatus.status}, Score: ${updatedStatus.score}")
+```
+
+* **API Endpoint:** [`PUT /anime/{anime_id}/my_list_status`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_my_list_status_put)
+
+### Delete Anime List Item
+
+Remove an entry from the user's anime list:
+
+```kotlin
+client.anime.deleteUserAnimeListItem(animeId = 5114)
+```
+
+* **API Endpoint:** [`DELETE /anime/{anime_id}/my_list_status`](https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_my_list_status_delete)
