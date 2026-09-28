@@ -1,0 +1,8 @@
+{
+  "label": "Core Concepts",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn about essential concepts in Koani, including type-safe field selection, pagination, and error handling."
+  }
+}

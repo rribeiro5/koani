@@ -1,0 +1,72 @@
+---
+sidebar_position: 2
+title: Pagination
+description: Handle paginated API responses and navigate large datasets effortlessly.
+---
+
+# Pagination
+
+List operations in Koani (such as anime searches, seasonal schedules, rankings, or forum topic lists) return results wrapped in `PaginatedList<T>`.
+
+## The PaginatedList Data Class
+
+`PaginatedList<T>` contains the current page's items alongside navigation metadata:
+
+```kotlin
+public data class PaginatedList<T>(
+    val data: List<T>,
+    val paging: PagingData
+)
+
+public data class PagingData(
+    val nextUrl: String? = null,
+    val previousUrl: String? = null,
+    val nextOffset: Int? = null,
+    val previousOffset: Int? = null,
+    val limit: Int? = null
+)
+```
+
+## Fetching Initial Page
+
+To request a list, specify an optional `limit` (number of items per page) and `offset` (number of items to skip):
+
+```kotlin
+val page = client.anime.getAnimeList(
+    query = "Naruto",
+    limit = 10,
+    offset = 0
+)
+
+println("Fetched ${page.data.size} items.")
+println("Next Offset: ${page.paging.nextOffset}")
+```
+
+## Loading Next Pages
+
+To load subsequent pages, pass `nextOffset` from the current page's `paging` metadata to the next request:
+
+```kotlin
+var currentOffset = 0
+val pageSize = 10
+
+do {
+    val page = client.anime.getAnimeList(
+        query = "One Piece",
+        limit = pageSize,
+        offset = currentOffset
+    )
+
+    // Process current page items
+    page.data.forEach { anime ->
+        println("${anime.title}")
+    }
+
+    // Update offset for next iteration
+    currentOffset = page.paging.nextOffset ?: break
+} while (page.paging.nextOffset != null)
+```
+
+## UI List Integration
+
+In Android Jetpack Compose or Kotlin Multiplatform UI architectures, you can expose state holders or pagination states driven by `limit` and `nextOffset` to enable infinite scrolling lists.

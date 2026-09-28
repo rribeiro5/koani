@@ -1,0 +1,51 @@
+---
+sidebar_position: 3
+title: Error Handling
+description: Catch and handle network, API, and HTTP status exceptions gracefully.
+---
+
+# Error Handling
+
+All exceptions thrown during API calls in Koani inherit from the sealed base class `KoaniException`. This allows you to handle network failures, invalid parameters, and API error states cleanly using exhaustive Kotlin `when` expressions.
+
+## The KoaniException Hierarchy
+
+```kotlin
+public sealed class KoaniException(message: String) : Exception(message)
+```
+
+### Specific Exception Types
+
+* **`BadRequestException` (HTTP 400):** Thrown when query parameters or payload inputs are invalid. Provides `error` and `apiMessage` fields.
+* **`UnauthorizedException` (HTTP 401):** Thrown when authentication credentials or refresh tokens are missing or expired.
+* **`ForbiddenException` (HTTP 403):** Thrown when requesting resources that the authenticated account lacks permissions to access.
+* **`NotFoundException` (HTTP 404):** Thrown when the requested anime, manga, topic, or user ID does not exist on MyAnimeList.
+* **`RedirectResponseException` (HTTP 3xx):** Thrown when an unexpected HTTP redirect response occurs.
+* **`ServerResponseException` (HTTP 5xx):** Thrown when MyAnimeList servers experience an internal error or outage.
+
+## Handling Errors in Practice
+
+Catch specific exception instances or pattern-match using `when`:
+
+```kotlin
+import io.github.rribeiro5.koani.error.*
+
+suspend fun safeFetchAnimeDetails(animeId: Int) {
+    try {
+        val anime = client.anime.getAnimeDetails(animeId = animeId)
+        println("Loaded: ${anime.title}")
+    } catch (e: NotFoundException) {
+        println("Anime with ID $animeId was not found.")
+    } catch (e: UnauthorizedException) {
+        println("User session expired. Please log in again.")
+    } catch (e: BadRequestException) {
+        println("Invalid request parameters: ${e.apiMessage}")
+    } catch (e: ServerResponseException) {
+        println("MyAnimeList servers are temporarily unavailable (${e.statusCode}).")
+    } catch (e: KoaniException) {
+        println("Koani API Error: ${e.message}")
+    } catch (e: Exception) {
+        println("Unexpected network or system error: ${e.message}")
+    }
+}
+```
