@@ -20,6 +20,9 @@ const config: Config = {
   baseUrl,
   organizationName: 'rribeiro5',
   projectName: 'koani',
+  customFields: {
+    libraryVersion,
+  },
 
   // The generated Dokka pages live in static files, which Docusaurus cannot validate as routes.
   onBrokenLinks: 'warn',
