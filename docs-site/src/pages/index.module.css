@@ -1,10 +1,9 @@
 /**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
+ * Homepage styles for Koani documentation
  */
 
 .heroBanner {
-  padding: 4rem 0;
+  padding: 4rem 0 3.5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -12,8 +11,22 @@
 
 @media screen and (max-width: 996px) {
   .heroBanner {
-    padding: 2rem;
+    padding: 2.5rem 1rem;
   }
+}
+
+.heroInstall {
+  max-width: 580px;
+  margin: 1.75rem auto;
+  text-align: left;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Remove bottom margin from CodeBlock inside heroInstall */
+.heroInstall :global(.theme-code-block) {
+  margin-bottom: 0 !important;
 }
 
 .buttons {
@@ -22,4 +35,31 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.section {
+  padding: 3.5rem 0;
+}
+
+.sectionAlt {
+  padding: 3.5rem 0;
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.featureCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.featureIcon {
+  font-size: 2.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.codePreview {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
