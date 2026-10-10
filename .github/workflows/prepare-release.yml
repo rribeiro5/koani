@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code
@@ -134,7 +135,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.validate.outputs.version }}
-          name: Release v${{ steps.validate.outputs.version }}
+          name: v${{ steps.validate.outputs.version }}
           body_path: release-notes.md
           draft: true
           prerelease: ${{ contains(steps.validate.outputs.version, '-') }}
@@ -171,4 +172,12 @@ jobs:
               labels: ['release']
             });
             
-            console.log(`Created PR #${pr.data.number} for release v${version} against base branch ${baseBranch}`);
+            // Assign the user who triggered the workflow
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.data.number,
+              assignees: [actor]
+            });
+            
+            console.log(`Created PR #${pr.data.number}, added label 'release', and assigned @${actor} for release v${version} against base branch ${baseBranch}`);
