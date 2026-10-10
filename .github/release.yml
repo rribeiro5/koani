@@ -1,0 +1,23 @@
+changelog:
+  exclude:
+    labels:
+      - "release"
+      - "skip-changelog"
+      - "internal"
+    authors:
+      - "github-actions[bot]"
+  categories:
+    - title: "🚀 New Features"
+      labels:
+        - "enhancement"
+    - title: "🐛 Bug Fixes"
+      labels:
+        - "bug"
+    - title: "📚 Documentation & Samples"
+      labels:
+        - "documentation"
+        - "samples"
+    - title: "📦 Dependency Updates"
+      labels:
+        - "dependencies"
+        - "deps"

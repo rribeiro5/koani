@@ -62,12 +62,13 @@ kotlin {
 //https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
 mavenPublishing {
     publishToMavenCentral()
+    signAllPublications()
     coordinates("io.github.rribeiro5", "koani-auth-persistence-ksafe", libs.versions.koani.version.get())
 
     pom {
-        name = "koani"
-        description = "Kotlin Multiplatform library"
-        url = "github url" //todo
+        name = "koani-auth-persistence-ksafe"
+        description = "Kotlin Multiplatform library for the MyAnimeList API - Support for secure token persistence with KSafe"
+        url = "https://rribeiro5.github.io/koani/"
 
         licenses {
             license {
@@ -78,15 +79,14 @@ mavenPublishing {
 
         developers {
             developer {
-                id = "" //todo github nickname
-                name = "" //todo full name
-                email = "" //todo email
+                id = "rribeiro5"
+                name = "Rafael Ribeiro"
+                email = "rribeiro5.dev@proton.me"
             }
         }
 
         scm {
-            url = "github url" //todo
+            url = "https://github.com/rribeiro5/koani"
         }
     }
-    if (project.hasProperty("signing.keyId")) signAllPublications()
 }
