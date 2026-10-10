@@ -1,0 +1,152 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  pages: write
+  id-token: write
+
+jobs:
+  validate:
+    name: Validate Release Branch & PR
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.info.outputs.version }}
+      pr_number: ${{ steps.info.outputs.pr_number }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Release Branch and PR
+        uses: actions/github-script@v7
+        id: info
+        with:
+          script: |
+            const ref = context.ref; // e.g. refs/heads/release/2.1.0
+            if (!ref.startsWith('refs/heads/release/')) {
+              core.setFailed(`Publish release workflow must be run on a release branch (refs/heads/release/*). Current ref: ${ref}`);
+              return;
+            }
+            
+            const branchName = ref.replace('refs/heads/', '');
+            const version = branchName.replace('release/', '');
+            
+            console.log(`Release branch: ${branchName}, Version: ${version}`);
+            
+            // Find open PR for this branch into any base branch with 'release' label
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branchName}`,
+              state: 'open'
+            });
+            
+            if (pulls.data.length === 0) {
+              core.setFailed(`No open Pull Request found from ${branchName}.`);
+              return;
+            }
+            
+            const pr = pulls.data[0];
+            const hasReleaseLabel = pr.labels.some(label => label.name === 'release');
+            
+            if (!hasReleaseLabel) {
+              core.setFailed(`Pull Request #${pr.number} does not have the required 'release' label.`);
+              return;
+            }
+            
+            console.log(`Validated PR #${pr.number} (base: ${pr.base.ref}) successfully.`);
+            core.setOutput('version', version);
+            core.setOutput('pr_number', pr.number);
+
+  publish-maven:
+    name: Publish Release to Maven Central
+    needs: validate
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Publish to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: |
+          ./gradlew publishAndReleaseToMavenCentral --no-parallel --max-workers=1 --no-configuration-cache
+
+  publish-docs:
+    name: Publish Documentation
+    needs: validate
+    uses: ./.github/workflows/publish-docs.yml
+
+  finalize-release:
+    name: Finalize Release & Merge PR
+    needs: [validate, publish-maven, publish-docs]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.validate.outputs.version }}
+          name: Release v${{ needs.validate.outputs.version }}
+          draft: false
+          prerelease: ${{ contains(needs.validate.outputs.version, '-') }}
+
+      - name: Squash Merge PR and Delete Branch
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ needs.validate.outputs.pr_number }}
+          VERSION: ${{ needs.validate.outputs.version }}
+        with:
+          script: |
+            const prNumber = parseInt(process.env.PR_NUMBER);
+            const version = process.env.VERSION;
+            const branchName = "release/" + version;
+            
+            console.log(`Squash merging PR #${prNumber}...`);
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              merge_method: 'squash',
+              commit_title: `Release v${version} (#${prNumber})`
+            });
+            
+            console.log(`Deleting remote branch ${branchName}...`);
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${branchName}`
+              });
+            } catch (e) {
+              console.log(`Could not delete branch ${branchName} (it may already be deleted):`, e.message);
+            }
+            
+            console.log("Release finalized, GitHub Release published, PR merged, and branch cleaned up successfully!");
