@@ -96,6 +96,7 @@ kotlin {
 //https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
 mavenPublishing {
     publishToMavenCentral()
+    signAllPublications()
     coordinates("io.github.rribeiro5", "koani-core", libs.versions.koani.version.get())
 
     pom {
@@ -122,5 +123,4 @@ mavenPublishing {
             url = "https://github.com/rribeiro5/koani"
         }
     }
-    if (project.hasProperty("signing.keyId")) signAllPublications()
 }
