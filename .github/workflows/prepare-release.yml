@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code
@@ -171,4 +172,12 @@ jobs:
               labels: ['release']
             });
             
-            console.log(`Created PR #${pr.data.number} for release v${version} against base branch ${baseBranch}`);
+            // Assign the user who triggered the workflow
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.data.number,
+              assignees: [actor]
+            });
+            
+            console.log(`Created PR #${pr.data.number}, added label 'release', and assigned @${actor} for release v${version} against base branch ${baseBranch}`);
