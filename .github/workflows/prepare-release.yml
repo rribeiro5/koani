@@ -135,7 +135,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.validate.outputs.version }}
-          name: Release v${{ steps.validate.outputs.version }}
+          name: v${{ steps.validate.outputs.version }}
           body_path: release-notes.md
           draft: true
           prerelease: ${{ contains(steps.validate.outputs.version, '-') }}
