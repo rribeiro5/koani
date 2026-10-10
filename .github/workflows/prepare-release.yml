@@ -1,0 +1,164 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 2.1.0)'
+        required: true
+        type: string
+
+jobs:
+  prepare:
+    name: Prepare Release v${{ inputs.version }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Version Format
+        id: validate
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "Error: Version '$VERSION' is not a valid Semantic Version (e.g. 2.1.0 or 2.1.0-beta01)."
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.io"
+
+      - name: Create Release Branch
+        id: branch
+        run: |
+          BRANCH_NAME="release/${{ steps.validate.outputs.version }}"
+          git checkout -b "$BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Update Version in Version Catalog
+        run: |
+          VERSION="${{ steps.validate.outputs.version }}"
+          TOML_FILE="gradle/libs.versions.toml"
+          
+          if [ ! -f "$TOML_FILE" ]; then
+            echo "Error: $TOML_FILE not found!"
+            exit 1
+          fi
+          
+          # Replace koani-version = "..." with the new version
+          sed -i 's/^koani-version[[:space:]]*=[[:space:]]*".*"/koani-version = "'$VERSION'"/' "$TOML_FILE"
+          
+          git add "$TOML_FILE"
+
+      - name: Generate Release Notes
+        uses: actions/github-script@v7
+        id: release-notes
+        env:
+          VERSION: ${{ steps.validate.outputs.version }}
+        with:
+          script: |
+            const version = process.env.VERSION;
+            try {
+              const response = await github.rest.repos.generateReleaseNotes({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: `v${version}`,
+                target_commitish: process.env.GITHUB_REF_NAME
+              });
+              return response.data.body;
+            } catch (error) {
+              console.log("Could not generate release notes via API, falling back:", error);
+              return "Release v" + version;
+            }
+
+      - name: Update Changelog in Documentation
+        uses: actions/github-script@v7
+        env:
+          VERSION: ${{ steps.validate.outputs.version }}
+          RELEASE_NOTES: ${{ steps.release-notes.outputs.result }}
+        with:
+          script: |
+            const fs = require('fs');
+            const version = process.env.VERSION;
+            const notes = process.env.RELEASE_NOTES || '';
+            const today = new Date().toISOString().split('T')[0];
+            
+            const changelogPath = 'docs-site/src/pages/changelog.mdx';
+            let content = '';
+            if (fs.existsSync(changelogPath)) {
+              content = fs.readFileSync(changelogPath, 'utf8');
+            } else {
+              content = "---\ntitle: Changelog\n---\n\n# Changelog\n";
+            }
+            
+            const newEntry = `## v${version} (${today})\n\n${notes.trim()}\n`;
+            
+            // Insert directly after # Changelog with clean spacing
+            const target = '# Changelog';
+            if (content.includes(target)) {
+              content = content.replace(target, `${target}\n\n${newEntry}`);
+            } else {
+              content += `\n${newEntry}`;
+            }
+            
+            fs.writeFileSync(changelogPath, content, 'utf8');
+            console.log("Updated changelog.mdx successfully");
+
+      - name: Commit and Push Release Branch
+        run: |
+          git add docs-site/src/pages/changelog.mdx
+          git commit -m "chore: prepare release v${{ steps.validate.outputs.version }}"
+          git push origin "${{ steps.branch.outputs.branch_name }}" --force
+
+      - name: Create Draft GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.validate.outputs.version }}
+          name: Release v${{ steps.validate.outputs.version }}
+          body: ${{ steps.release-notes.outputs.result }}
+          draft: true
+          prerelease: ${{ contains(steps.validate.outputs.version, '-') }}
+
+      - name: Create Pull Request to Base Branch
+        uses: actions/github-script@v7
+        env:
+          VERSION: ${{ steps.validate.outputs.version }}
+          BRANCH_NAME: ${{ steps.branch.outputs.branch_name }}
+          BASE_BRANCH: ${{ github.ref_name }}
+        with:
+          script: |
+            const version = process.env.VERSION;
+            const branchName = process.env.BRANCH_NAME;
+            const baseBranch = process.env.BASE_BRANCH;
+            const actor = context.actor;
+            
+            const prBody = `Automated release PR for version **v${version}**.\n\nTo finalize and publish this release, execute the **Publish Release** workflow on branch \`${branchName}\`.\n\n*Triggered by @${actor}*`;
+            
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Release v${version}`,
+              head: branchName,
+              base: baseBranch,
+              body: prBody
+            });
+            
+            // Add 'release' label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.data.number,
+              labels: ['release']
+            });
+            
+            console.log(`Created PR #${pr.data.number} for release v${version} against base branch ${baseBranch}`);
