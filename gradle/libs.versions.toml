@@ -2,7 +2,7 @@
 
 koani-version = "2.0.0"
 
-android-compileSdk = "36"
+android-compileSdk = "37"
 android-minSdk = "24"
 
 kotlin = "2.4.20"
