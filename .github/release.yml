@@ -7,6 +7,9 @@ changelog:
     authors:
       - "github-actions[bot]"
   categories:
+    - title: "💥 Breaking Changes"
+      labels:
+        - "breaking-change"
     - title: "🚀 New Features"
       labels:
         - "enhancement"
