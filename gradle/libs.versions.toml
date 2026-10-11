@@ -1,6 +1,6 @@
 [versions]
 
-koani-version = "2.0.0"
+koani-version = "2.1.0"
 
 android-compileSdk = "37"
 android-minSdk = "24"
