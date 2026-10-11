@@ -24,6 +24,9 @@ val anime = client.anime.getAnimeDetails(
 println("${anime.title} — Score: ${anime.mean}")
 ```
 
+> [!NOTE]
+> **API Versioning:** The major version of Koani follows the versioning of the MyAnimeList API (for example, Koani `v2.x.x` targets MyAnimeList API `v2`).
+
 ## Quickstart Guide
 
 ### 1. Add Dependencies
