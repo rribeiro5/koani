@@ -6,7 +6,7 @@ description: Configure and instantiate KoaniClient using the Builder pattern.
 
 # Client Initialization
 
-`KoaniClient` is the main entry point for interacting with the MyAnimeList API. You instantiate it using `KoaniClient.Builder`, which allows you to customize credentials, token storage, timeouts, and logging levels.
+`KoaniClient` is the main entry point for interacting with the MyAnimeList API. You can create it using either the `KoaniClient` DSL or `KoaniClient.Builder`; both support configuring credentials, token storage, timeouts, and logging levels.
 
 ## Basic Initialization
 
@@ -15,9 +15,19 @@ To make unauthenticated API requests (such as searching anime, fetching public m
 ```kotlin
 import io.github.rribeiro5.koani.KoaniClient
 
+val client = KoaniClient(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
+```
+
+Or with `KoaniClient.Builder`:
+
+```kotlin
+import io.github.rribeiro5.koani.KoaniClient
+
 val client = KoaniClient.Builder(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
     .build()
 ```
+
+> **Note:** The `KoaniClient` DSL factory is available starting with version **2.1.0**. Use `KoaniClient.Builder` with earlier versions.
 
 ## Advanced Configuration
 
@@ -33,12 +43,12 @@ import eu.anifantakis.lib.ksafe.KSafe
 val kSafe = KSafe()
 val persistentTokenManager = KSafeTokenManager(kSafe)
 
-val client = KoaniClient.Builder(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
-    .clientSecret("YOUR_OPTIONAL_CLIENT_SECRET") // Optional
-    .tokenManager(persistentTokenManager)        // Optional: Custom or persistent token manager
-    .timeoutMillis(30_000L)                      // Optional: 30 second timeout
-    .logLevel(LogLevel.DEBUG)                    // Optional: Debug logging
-    .build()
+val client = KoaniClient(clientId = "YOUR_MYANIMELIST_CLIENT_ID") {
+    clientSecret("YOUR_OPTIONAL_CLIENT_SECRET") // Optional
+    tokenManager(persistentTokenManager)        // Optional: Custom or persistent token manager
+    timeoutMillis(30_000L)                      // Optional: 30 second timeout
+    logLevel(LogLevel.DEBUG)                    // Optional: Debug logging
+}
 ```
 
 ## Builder Options Summary
@@ -60,9 +70,9 @@ For best performance and resource utilization, maintain a single instance of `Ko
 ```kotlin
 val appModule = module {
     single {
-        KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
-            .logLevel(LogLevel.INFO)
-            .build()
+        KoaniClient(clientId = "YOUR_CLIENT_ID") {
+            logLevel(LogLevel.INFO)
+        }
     }
 }
 ```
@@ -77,9 +87,9 @@ object KoaniModule {
     @Provides
     @Singleton
     fun provideKoaniClient(): KoaniClient {
-        return KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
-            .timeoutMillis(15_000L)
-            .build()
+        return KoaniClient(clientId = "YOUR_CLIENT_ID") {
+            timeoutMillis(15_000L)
+        }
     }
 }
 ```

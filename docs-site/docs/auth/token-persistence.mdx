@@ -50,11 +50,11 @@ import eu.anifantakis.lib.ksafe.KSafe
 
 // Initialize KSafe storage instance
 val kSafe = KSafe()
-val tokenManager = KSafeTokenManager(kSafe)
+val persistentTokenManager = KSafeTokenManager(kSafe)
 
-val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
-    .tokenManager(tokenManager)
-    .build()
+val client = KoaniClient(clientId = "YOUR_CLIENT_ID") {
+    tokenManager(persistentTokenManager)
+}
 ```
 
 Once configured, Koani automatically persists access and refresh tokens upon successful authentication or token refresh, restoring them on future app launches.
@@ -94,10 +94,10 @@ class DataStoreTokenManager(
 }
 ```
 
-Pass your custom implementation to `KoaniClient.Builder`:
+Pass your custom implementation to the `KoaniClient` DSL:
 
 ```kotlin
-val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
-    .tokenManager(DataStoreTokenManager(encryptedStorage))
-    .build()
+val client = KoaniClient(clientId = "YOUR_CLIENT_ID") {
+    tokenManager(DataStoreTokenManager(encryptedStorage))
+}
 ```

@@ -7,7 +7,7 @@ import CodeBlock from '@theme/CodeBlock';
 import styles from './index.module.css';
 
 const codeExample = `// 1. Initialize KoaniClient
-val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID").build()
+val client = KoaniClient(clientId = "YOUR_CLIENT_ID")
 
 // 2. Fetch anime details requesting only TITLE and MEAN fields
 val anime = client.anime.getAnimeDetails(
@@ -116,7 +116,7 @@ export default function Home(): ReactNode {
               <div className="col col--5 margin-bottom--md">
                 <h2>Simple &amp; Expressive API</h2>
                 <p>
-                  Koani makes querying MyAnimeList data intuitive. Configure credentials with <code>KoaniClient.Builder</code>, specify the fields your UI needs, and execute requests asynchronously.
+                  Koani makes querying MyAnimeList data intuitive. Configure credentials with the <code>KoaniClient</code> DSL, specify the fields your UI needs, and execute requests asynchronously.
                 </p>
                 <p>
                   Built with defensive JSON parsing so your application remains unaffected when MyAnimeList adds new fields to API responses.
