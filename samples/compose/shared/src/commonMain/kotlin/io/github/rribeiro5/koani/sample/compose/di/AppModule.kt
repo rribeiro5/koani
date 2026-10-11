@@ -12,7 +12,7 @@ import org.koin.dsl.includes
 import org.koin.dsl.module
 
 val appModule = module {
-    single { KoaniClient.Builder(get<String>()).build() }
+    single { KoaniClient(get<String>()) }
     
     viewModel { AnimeRankingViewModel(get()) }
     viewModel { MangaRankingViewModel(get()) }

@@ -12,7 +12,7 @@ class KoaniCli : CliktCommand() {
     val clientId by option(help = "MyAnimeList Client ID").prompt("Enter your Client ID")
 
     override fun run() = runBlocking {
-        val client = KoaniClient.Builder(clientId).build()
+        val client = KoaniClient(clientId)
         MainMenu(client, terminal).run()
     }
 }

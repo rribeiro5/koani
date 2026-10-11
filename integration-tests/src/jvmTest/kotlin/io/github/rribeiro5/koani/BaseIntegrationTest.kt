@@ -44,24 +44,24 @@ abstract class BaseIntegrationTest {
     }
 
     protected fun createClient(authenticated: Boolean = false): KoaniClient {
-        val builder = KoaniClient.Builder(malClientId)
-            .timeoutMillis(30_000) // Increase timeout for integration tests
-        if (authenticated) {
-            val accessToken = System.getProperty("TEST_MAL_ACCESS_TOKEN")
-                ?: throw IllegalStateException(
-                    "TEST_MAL_ACCESS_TOKEN system property is not set. " +
-                        "Provide it via -PTEST_MAL_ACCESS_TOKEN, environment variable, or local.properties."
-                )
-            val refreshToken = System.getProperty("TEST_MAL_REFRESH_TOKEN")
-                ?: throw IllegalStateException(
-                    "TEST_MAL_REFRESH_TOKEN system property is not set. " +
-                        "Provide it via -PTEST_MAL_REFRESH_TOKEN, environment variable, or local.properties."
-                )
-            val tokenManager = MemoryTokenManager().apply {
-                storeTokens(accessToken, refreshToken)
+        return KoaniClient(malClientId) {
+            timeoutMillis(30_000) // Increase timeout for integration tests
+            if (authenticated) {
+                val accessToken = System.getProperty("TEST_MAL_ACCESS_TOKEN")
+                    ?: throw IllegalStateException(
+                        "TEST_MAL_ACCESS_TOKEN system property is not set. " +
+                            "Provide it via -PTEST_MAL_ACCESS_TOKEN, environment variable, or local.properties."
+                    )
+                val refreshToken = System.getProperty("TEST_MAL_REFRESH_TOKEN")
+                    ?: throw IllegalStateException(
+                        "TEST_MAL_REFRESH_TOKEN system property is not set. " +
+                            "Provide it via -PTEST_MAL_REFRESH_TOKEN, environment variable, or local.properties."
+                    )
+                val manager = MemoryTokenManager().apply {
+                    storeTokens(accessToken, refreshToken)
+                }
+                tokenManager(manager)
             }
-            builder.tokenManager(tokenManager)
         }
-        return builder.build()
     }
 }
