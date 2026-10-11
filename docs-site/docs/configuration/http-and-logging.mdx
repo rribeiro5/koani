@@ -6,16 +6,16 @@ description: Learn how Koani handles network configuration, timeouts, logging, a
 
 # HTTP & Logging
 
-Koani leverages **Ktor HTTP Client** under the hood to perform efficient, asynchronous, cross-platform network requests. You can configure timeouts and log levels directly through `KoaniClient.Builder`.
+Koani leverages **Ktor HTTP Client** under the hood to perform efficient, asynchronous, cross-platform network requests. You can configure timeouts and log levels directly through the `KoaniClient` DSL.
 
 ## Network Timeouts
 
 You can set custom request, connection, and socket timeouts using `timeoutMillis`:
 
 ```kotlin
-val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
-    .timeoutMillis(20_000L) // 20 seconds for connect, request, and socket timeouts
-    .build()
+val client = KoaniClient(clientId = "YOUR_CLIENT_ID") {
+    timeoutMillis(20_000L) // 20 seconds for connect, request, and socket timeouts
+}
 ```
 
 If a network request exceeds the specified duration, a `KoaniException` wrapping a timeout exception will be thrown.
@@ -27,9 +27,9 @@ Koani provides structured logging via the Kermit multiplatform logger. Set the d
 ```kotlin
 import io.github.rribeiro5.koani.LogLevel
 
-val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID")
-    .logLevel(LogLevel.DEBUG)
-    .build()
+val client = KoaniClient(clientId = "YOUR_CLIENT_ID") {
+    logLevel(LogLevel.DEBUG)
+}
 ```
 
 ### Available Log Levels

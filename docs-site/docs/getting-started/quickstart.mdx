@@ -60,14 +60,12 @@ dependencies {
 
 ## 2. Initialize the Client
 
-Create a `KoaniClient` instance using `KoaniClient.Builder`. You need a valid MyAnimeList **Client ID**.
+Create a `KoaniClient` instance using the `KoaniClient` DSL. You need a valid MyAnimeList **Client ID**.
 
 ```kotlin
 import io.github.rribeiro5.koani.KoaniClient
 
-val client = KoaniClient.Builder()
-    .clientId("YOUR_MYANIMELIST_CLIENT_ID")
-    .build()
+val client = KoaniClient(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
 ```
 
 ## 3. Make Your First Request

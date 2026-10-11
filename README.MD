@@ -10,7 +10,7 @@ Kotlin Multiplatform library for the MyAnimeList API.
 
 ```kotlin
 // 1. Initialize KoaniClient
-val client = KoaniClient.Builder(clientId = "YOUR_CLIENT_ID").build()
+val client = KoaniClient(clientId = "YOUR_CLIENT_ID")
 
 // 2. Fetch anime details requesting only TITLE and MEAN fields
 val anime = client.anime.getAnimeDetails(
@@ -67,7 +67,7 @@ import io.github.rribeiro5.koani.KoaniClient
 import io.github.rribeiro5.koani.error.KoaniException
 
 suspend fun main() {
-    val client = KoaniClient.Builder(clientId = "YOUR_MYANIMELIST_CLIENT_ID").build()
+    val client = KoaniClient(clientId = "YOUR_MYANIMELIST_CLIENT_ID")
 
     try {
         val searchResult = client.anime.getAnimeList(query = "Fullmetal Alchemist", limit = 5)

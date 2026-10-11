@@ -39,6 +39,18 @@ import io.github.rribeiro5.koani.manga.RankedManga as RankedMangaModel
 import io.github.rribeiro5.koani.manga.mapper.toApiValue as toMangaApiValue
 
 /**
+ * Creates a [KoaniClient] and optionally configures it with the builder DSL.
+ *
+ * @param clientId The MyAnimeList Client ID.
+ * @param configure Configuration to apply to the [KoaniClient.Builder].
+ * @return A new [KoaniClient] instance.
+ */
+public fun KoaniClient(
+    clientId: String,
+    configure: KoaniClient.Builder.() -> Unit = {},
+): KoaniClient = KoaniClient.Builder(clientId).apply(configure).build()
+
+/**
  * Main entry point for the Koani library to interact with the MyAnimeList API.
  *
  * Use [KoaniClient.Builder] to create an instance of this client.
