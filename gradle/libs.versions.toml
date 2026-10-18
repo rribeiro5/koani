@@ -5,7 +5,7 @@ koani-version = "2.1.0"
 android-compileSdk = "37"
 android-minSdk = "24"
 
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 agp = "9.4.1"
 maven-publish = "0.37.0"
 kotlinx-coroutines = "1.11.0"
