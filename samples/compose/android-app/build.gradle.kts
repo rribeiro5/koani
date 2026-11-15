@@ -1,3 +1,5 @@
+import com.android.build.api.variant.HasUnitTestBuilder
+
 plugins {
     id("com.android.application")
     alias(samples.plugins.kotlin.compose.compiler)
@@ -36,6 +38,16 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+    androidComponents {
+        beforeVariants { variantBuilder ->
+            (variantBuilder as? HasUnitTestBuilder)?.enableUnitTest = true
+        }
     }
     kotlin {
         jvmToolchain(17)
